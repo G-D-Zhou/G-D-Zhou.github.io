@@ -31,7 +31,7 @@
 <meta property="og:description" content="关于该网站 实际上，该网站最初的设想是用来存放一系列经过我个人优化的代码，这些代码是我正在翻译的书籍中提取的。然而，由于工作和生活方面的种种压力，导致我的书籍翻译进度非常缓慢。当书籍翻译进行到一半时，我的个人职业生涯发生了重大变化。我选择辞去了商业公司的职位，并接受了某所大学的博士后岗位。科研任务非常繁忙，而且新领域充满了未知和挑战，我需要投入大量时间来学习新知识，导致书籍翻译完全停滞了下来。我也">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-07-27T14:41:15.000Z">
-<meta property="article:modified_time" content="2023-07-30T16:09:57.421Z">
+<meta property="article:modified_time" content="2024-01-28T14:41:28.000Z">
 <meta property="article:author" content="Dr. Zhou">
 <meta name="twitter:card" content="summary">
 
@@ -133,14 +133,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
       </div>
   </nav>
 </div>
@@ -179,7 +183,7 @@
 <p>几个月后，我意识到至少应该整理之前已经完成的那部分代码，并且在学习新知识的过程中，我积累了很多宝贵的经验和知识，其中包括来自公开网络和开源代码等资源，我认为这些都应该以同样的精神分享给他人。</p>
 <p>尽管时代已经改变，推动本世纪前二十年发展的引擎正在逐渐熄灭，但我仍然深信，遗留在整个历史上的精神是消磨不尽的。</p>
 <h2 id="about-me">About me</h2>
-<p>Dr. Zhou has more than 6 years of experience in various plasma
+<p>Dr. Zhou has more than 8 years of experience in various plasma
 technologies for epitaxial thin-film growth. And he has extensive
 interest in the physical processes and applications of low-temperature
 plasma (including laser, DC, RF, and microwave). Recently, his research
@@ -189,8 +193,8 @@ growth, physical property, and mechanism analysis.</p>
 <ul class="task-list">
 <li><label><input
 type="checkbox" />已翻译内容代码分章节更新</label></li>
-<li><label><input
-type="checkbox" />对gitbook平台发表的博客等转移至本网站</label>
+<li><label><input type="checkbox"
+checked="" />对gitbook平台发表的博客等转移至本网站</label>
 <ul class="task-list">
 <li><label><input type="checkbox"
 checked="" />数值分析的少量内容</label></li>
@@ -199,8 +203,8 @@ checked="" />XRD分析相关内容</label></li>
 </ul></li>
 <li><label><input
 type="checkbox" />整理过去在简书上的文章，转移至本网站</label></li>
-<li><label><input
-type="checkbox" />持续更新我与Ai合作生成的代码</label></li>
+<li><label><input type="checkbox"
+checked="" />持续更新我与Ai合作生成的代码</label></li>
 </ul>
 <h2 id="无限可能">无限可能</h2>
 <ul class="task-list">
@@ -219,7 +223,7 @@ type="checkbox" />高温高压合成金刚石的历史</label></li>
 type="checkbox" />简单等离子体物理仿真计算</label></li>
 </ul>
 <h2 id="其它">其它</h2>
-<p>几经辗转，博客总体从最初的纯html文件迁移到GitBooK，最后综合所有的情况，迁移到hexo创建博客的形式。</p>
+<p>几经辗转，博客总体从最初的纯html文件迁移到GitBook，最后综合所有的情况，迁移到hexo创建博客的形式。</p>
 
       </div>
       
@@ -239,7 +243,7 @@ type="checkbox" />简单等离子体物理仿真计算</label></li>
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2023</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -257,15 +261,16 @@ type="checkbox" />简单等离子体物理仿真计算</label></li>
     function createtime() {
         var grt= new Date("08/02/2016 8:00:00");//此处修改你的建站时间或者网站上线时间
         now.setTime(now.getTime()+250);
-        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
-        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
-        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+	years = (now - grt ) / 1000 / 60 / 60 / 24 / 365; ynum = Math.floor(years);
+        days = (now - grt ) / 1000 / 60 / 60 / 24 - (365*ynum) ; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum)- (365*24*ynum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum)- (60*365*24*ynum);
         mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
-        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        seconds = (now - grt ) / 1000- (60*60*365*24*ynum) - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
         snum = Math.round(seconds); 
         if(String(snum).length ==1 ){snum = "0" + snum;}
         // var times = document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
-        document.getElementById("timeDate").innerHTML = "Dr. Zhou 正式从事科研工作： "+dnum+" 天 "+hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+        document.getElementById("timeDate").innerHTML = "Dr. Zhou 正式从事科研工作： "+ynum+" 年 " +dnum+" 天 "+hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
     }
 setInterval("createtime()",250);
 </script>

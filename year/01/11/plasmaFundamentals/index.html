@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-32X32.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32X32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-32X32.png">
+  <link rel="mask-icon" href="/images/logo-32X32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"g-d-zhou.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="&quot;Plasma Simulations by Example&quot;一书的学习笔记。 介绍 本章从动力学和流体方法模拟等离子体的概述开始，并介绍了静电PIC控制方程。随后，讨论了有限差分法对微分方程的离散化。我们将使用这种方法来模拟被困在势阱中电子的行为。 气体模拟方法 在微观尺度上，等离子体可以简单地看作由带电粒子（离子和电子）组成的气体。这是我们在本书中采取的基本观点。我们主要关注的是由中性原子、正">
+<meta property="og:type" content="article">
+<meta property="og:title" content="等离子体模拟基础">
+<meta property="og:url" content="https://g-d-zhou.github.io/year/01/11/plasmaFundamentals/index.html">
+<meta property="og:site_name" content="格物轩">
+<meta property="og:description" content="&quot;Plasma Simulations by Example&quot;一书的学习笔记。 介绍 本章从动力学和流体方法模拟等离子体的概述开始，并介绍了静电PIC控制方程。随后，讨论了有限差分法对微分方程的离散化。我们将使用这种方法来模拟被困在势阱中电子的行为。 气体模拟方法 在微观尺度上，等离子体可以简单地看作由带电粒子（离子和电子）组成的气体。这是我们在本书中采取的基本观点。我们主要关注的是由中性原子、正">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/Lubos/latexImage_3dd467dadf85e4af8364fe934ea1a25b.png">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/Lubos/latexImage_17e07b708c4fd5bae09514d39b114913.png">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/Lubos/latexImage_247568ef256a6e4f13e79ff35d0a948f.png">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/Lubos/latexImage_6da4fa83eeaa26a11ab1e00c14cf882e.png">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/Lubos/latexImage_4ac5dd0f0f2a3fbf2514a5a8017c00af.png">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/Lubos/latexImage_0973cb5041f3469f5a9911e5f67c1b0d.png">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/plasma-sec-1-1-11.png">
+<meta property="og:image" content="https://g-d-zhou.github.io/images/%E5%8D%95%E4%B8%AA%E7%94%B5%E5%AD%90%E5%9C%A8%E7%A6%BB%E5%AD%90%E4%B8%AD%E7%9A%84%E8%BF%90%E5%8A%A8.png">
+<meta property="article:published_time" content="2024-01-11T05:29:12.000Z">
+<meta property="article:modified_time" content="2024-05-19T11:41:49.000Z">
+<meta property="article:author" content="Dr. Zhou">
+<meta property="article:tag" content="通过示例讲解等离子体模拟">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://g-d-zhou.github.io/images/Lubos/latexImage_3dd467dadf85e4af8364fe934ea1a25b.png">
+
+
+<link rel="canonical" href="https://g-d-zhou.github.io/year/01/11/plasmaFundamentals/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://g-d-zhou.github.io/year/01/11/plasmaFundamentals/","path":"year/01/11/plasmaFundamentals/","title":"等离子体模拟基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>等离子体模拟基础 | 格物轩</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">格物轩</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">学习、笔记与分享</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="格物轩">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%94%E4%BD%93%E6%A8%A1%E6%8B%9F%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">气体模拟方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">直接方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%BB%E5%B0%94%E5%85%B9%E6%9B%BC%E6%96%B9%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">玻尔兹曼方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BA%A6%E5%85%8B%E6%96%AF%E9%9F%A6-%E7%8E%BB%E5%B0%94%E5%85%B9%E6%9B%BC%E5%88%86%E5%B8%83%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">麦克斯韦-玻尔兹曼分布函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E4%BD%93%E5%92%8C%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%96%B9%E6%B3%95"><span class="nav-number">2.4.</span> <span class="nav-text">流体和动力学方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%92%8C%E6%AC%A7%E6%8B%89%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.5.</span> <span class="nav-text">拉格朗日和欧拉描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E4%BD%93%E6%96%B9%E6%B3%95%E5%92%8C%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%96%B9%E6%B3%95%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">2.6.</span> <span class="nav-text">流体方法和动力学方法的比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E7%94%B5pic"><span class="nav-number">3.</span> <span class="nav-text">静电PIC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%9B%E4%BC%A6%E5%85%B9%E5%8A%9B"><span class="nav-number">3.1.</span> <span class="nav-text">洛伦兹力</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BA%A6%E5%85%8B%E6%96%AF%E9%9F%A6%E6%96%B9%E7%A8%8B%E7%BB%84"><span class="nav-number">3.2.</span> <span class="nav-text">麦克斯韦方程组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%8A%E6%9D%BE%E6%96%B9%E7%A8%8B"><span class="nav-number">3.3.</span> <span class="nav-text">泊松方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E7%9A%84%E4%B8%BB%E5%BE%AA%E7%8E%AF"><span class="nav-number">3.4.</span> <span class="nav-text">模拟的主循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E7%B2%92%E5%AD%90%E8%BF%90%E5%8A%A8"><span class="nav-number">4.</span> <span class="nav-text">单粒子运动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E7%A6%BB%E6%95%A3%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">域离散化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E9%99%90%E5%B7%AE%E5%88%86%E6%96%B9%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">有限差分方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%BF%E6%B1%82%E8%A7%A3%E5%99%A8"><span class="nav-number">4.3.</span> <span class="nav-text">势求解器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tridiagonal-%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.1.</span> <span class="nav-text">Tridiagonal 算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jacobi-%E8%BF%AD%E4%BB%A3"><span class="nav-number">4.3.2.</span> <span class="nav-text">Jacobi 迭代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gauss-seidel-%E6%96%B9%E6%A1%88"><span class="nav-number">4.3.3.</span> <span class="nav-text">Gauss-Seidel 方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E8%B6%85%E6%9D%BE%E5%BC%9B"><span class="nav-number">4.3.4.</span> <span class="nav-text">连续超松弛</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%B6%E6%95%9B%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="nav-number">4.3.5.</span> <span class="nav-text">收敛性检查</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%9C%BA"><span class="nav-number">4.4.</span> <span class="nav-text">电场</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%92%E5%AD%90%E8%BF%90%E5%8A%A8"><span class="nav-number">4.5.</span> <span class="nav-text">粒子运动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%91%E5%89%8D%E5%90%91%E5%90%8E%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95"><span class="nav-number">4.5.1.</span> <span class="nav-text">向前&#x2F;向后欧拉方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%9B%99%E8%B7%B3%E6%96%B9%E6%B3%95"><span class="nav-number">4.5.2.</span> <span class="nav-text">蛙跳方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%B3%95"><span class="nav-number">4.5.3.</span> <span class="nav-text">替代方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%80%BC"><span class="nav-number">4.6.</span> <span class="nav-text">插值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%8A%E6%96%AD"><span class="nav-number">4.7.</span> <span class="nav-text">诊断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E9%83%A8%E4%BB%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">全部代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E5%AE%9E%E7%8E%B0numba%E5%8A%A0%E9%80%9F"><span class="nav-number">6.</span> <span class="nav-text">python实现(numba加速)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#julia%E5%AE%9E%E7%8E%B0"><span class="nav-number">7.</span> <span class="nav-text">Julia实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dr. Zhou"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Dr. Zhou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://g-d-zhou.github.io/year/01/11/plasmaFundamentals/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Dr. Zhou">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="格物轩">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="等离子体模拟基础 | 格物轩">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          等离子体模拟基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-01-11 13:29:12" itemprop="dateCreated datePublished" datetime="2024-01-11T13:29:12+08:00">2024-01-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-05-19 19:41:49" itemprop="dateModified" datetime="2024-05-19T19:41:49+08:00">2024-05-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BD%8E%E6%B8%A9%E7%AD%89%E7%A6%BB%E5%AD%90%E4%BD%93%E7%90%86%E8%AE%BA%E4%B8%8E%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">低温等离子体理论与应用</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>"Plasma Simulations by Example"一书的学习笔记。</p>
+<h2 id="介绍">介绍</h2>
+<p>本章从动力学和流体方法模拟等离子体的概述开始，并介绍了静电PIC控制方程。随后，讨论了有限差分法对微分方程的离散化。我们将使用这种方法来模拟被困在势阱中电子的行为。</p>
+<h2 id="气体模拟方法">气体模拟方法</h2>
+<p>在微观尺度上，等离子体可以简单地看作由带电粒子（离子和电子）组成的气体。这是我们在本书中采取的基本观点。我们主要关注的是由中性原子、正离子和电子(足以中和空间电荷的)这样的基本组合。
+流体模拟的目标是根据一些初始条件和控制定律，预测粒子速度和位置的演变。在经典牛顿物理学的框架下，我们假设所有的中性粒子、离子和电子都作为刚体受运动方程控制，</p>
+<p><span class="math display">\[\begin{equation}\label{1.1}
+    \frac{\mathrm{d} \vec{x}}{\mathrm{d} t}=\vec{v} \quad
+\frac{\mathrm{d} \vec{v}}{\mathrm{d} t}=\vec{a}
+\end{equation}\]</span></p>
+<p>------Ai 润色到此处</p>
+<p>其中，<span class="math inline">\(\vec{x}\)</span>，<span
+class="math inline">\(\vec{v}\)</span>和<span
+class="math inline">\(\vec{a}\)</span>分别是单个粒子的位置，速度和加速度。如果粒子的质量<span
+class="math inline">\(m\)</span>保持不变(本书中该假设均成立)，加速度由牛顿第二定律可知为<span
+class="math inline">\(\vec{a}=\sum \vec{F} / m\)</span>。
+一些力，如重力，来自外部环境。其他力可能是系统固有的力。带电粒子通过库仑力相互作用，</p>
+<p><span class="math display">\[\begin{equation}\label{1.2}
+    \vec{F}_{c, i j}=\frac{1}{4 \pi \epsilon_{0}} \frac{q_{i}
+q_{j}}{\left|\vec{x}_{i}-\vec{x}_{j}\right|^{3}}\left(\vec{x}_{i}-\vec{x}_{j}\right)
+\end{equation}\]</span> 其中，<span
+class="math inline">\(i\)</span>和<span
+class="math inline">\(j\)</span>是两个带有<span
+class="math inline">\(q_{i}\)</span>和<span
+class="math inline">\(q_{j}\)</span>电量的粒子。<span
+class="math inline">\(\epsilon_{0} \approx 8.8542 \times 10^{-12}\
+\mathrm{C} /(\mathrm{Vm})\)</span>
+是自由空间的介电常数。该公式忽略了移动电荷的磁场效应。单个粒子受到的总的力为，
+<span class="math display">\[\begin{equation}\label{1.3}
+    \vec{F}_{c, i}=\sum_{j}^{N} \vec{F}_{c, i j} \quad i \neq j
+\end{equation}\]</span></p>
+<p>其中，求和是对系统所有粒子的。粒子的速度也可以被碰撞改变。因此，我们有:
+<span class="math display">\[\begin{equation}
+    \frac{d\vec{v}}{dt}=\frac1m\left(\vec{F}_g+\vec{F}_c+\ldots\right)+\left(\frac{d\vec{v}}{dt}\right)_{col}
+\end{equation}\]</span>
+尽管上述公式中包含了重力，但人们习惯上忽略它。</p>
+<h3 id="直接方法">直接方法</h3>
+<p>从概念上讲，一个包含N个粒子的系统可以通过遍历整个列表来建模，并且每个粒子所受库仑力由下式计算：
+<span class="math display">\[\begin{equation}
+    \vec{F}_{c,i}=q_i\vec{E}_i
+\end{equation}\]</span> 其中， <span
+class="math display">\[\begin{equation}
+    \begin{array}{rrrrrr}&amp;&amp;\vec{E_i}=\sum_j\frac1{4\pi\epsilon_0}\frac{q_j}{r_{ij}^3}\left(\vec{r_i}-\vec{r_j}\right)&amp;&amp;i\neq
+j&amp;\\\hdashline\end{array}
+\end{equation}\]</span></p>
+<p>通过简单的估算可知，这样计算一次的时间比宇宙的年龄还要长七个数量级。实际上，后面会讲到有很快的方法计算。</p>
+<p>然而，即使假设线性缩放，由于粒子数量巨大，计算运行时间也将是 21
+年。此外，即使一些突然的突破导致计算速度的大幅提高，存储粒子数据所需的内存量也是惊人的。仅存储六个浮点数就需要超过
+7000 亿 GB 的 RAM，这些浮点数捕获真空压力下单个立方米中 <span
+class="math inline">\(10^{16}\)</span>
+个粒子的粒子位置和速度。这超出了任何超级计算机的能力。</p>
+<h3 id="玻尔兹曼方程">玻尔兹曼方程</h3>
+<p>在一个小的控制体积内瞬间冻结所有的粒子，就可以根据它们的速度分量对它们进行分组。为了完成分组，我们在三维速度空间中定义了一个直方图。每个bin对应于x、y和z的速度分量u、v和w的唯一组合。每个bin的宽度由Δu、Δv和Δw给出。u±0.5Δu、v±0.5Δv和v±0.5Δv的粒子均落入同一bin内。在bin无穷小的极限情况下，离散直方图成为光滑的超空间曲面。该曲面表示速度分布函数，简称VDF。</p>
+<p>图1.1给出了仅考虑u和v分量时的一个可能的VDF。函数的值，用表面的高度和阴影表示，表示具有相应u和v速度分量的粒子数。我们清楚地看到大多数粒子都集中在一些平均速度的周围。两条直线u
+= 0和v = 0将每个速度分量划分为一个负半空间和一个正半空间。v速度以v =
+0为中心，因此在y方向上没有净运动。另一方面，x存在明显的漂移。即使存在u
+&lt; 0的粒子，大部分粒子的u为正。</p>
+<img src="/images/Lubos/latexImage_3dd467dadf85e4af8364fe934ea1a25b.png" class="" width="400" title="Figure 1.1 Example of a typical gas velocity distribution function.">
+<p>在没有碰撞的情况下，所有具有相同速度的粒子都具有一致的运动。这是牛顿第二定律的直接结果。这里我们假设控制体积足够小，使得力项不存在空间变化。由于结果对所有群体都是相同的，因此不需要对每个bin中的一个以上的粒子进行速度积分。只有通过碰撞，一部分群体才以独特的方式受到影响。因此，我们写出一个保守项：
+<span class="math display">\[\begin{equation}\label{equ-1-7}
+    \frac{df}{dt}=\left(\frac{\partial f}{\partial t}\right)_{col}
+\end{equation}\]</span></p>
+<p>这种关系表明，分布函数f的全导数只通过一些尚未定义的碰撞算子发生改变。到目前为止，我们所讨论的分布只对它被采样的小控制体积有效。不同的体积，对应其他空间区域，具有独特的粒子速度组合。分布也随时间演化。因此，VDF是7个变量的函数，<span
+class="math inline">\(f = f(x, y, z, u, v, w, t)\)</span>。式中：f为(x,
+y, z)位置和t时刻速度分量为(u, v,
+w)的粒子数。该分布可以任意归一化，在这种情况下函数值(
+f是找到这样一个粒子的概率)。我更喜欢使用非归一化版本，因为它携带了完全描述气体状态所需的所有信息。</p>
+<p>利用链式法则改写方程<span
+class="math inline">\(\ref{equ-1-7}\)</span>中的导数，得到玻尔兹曼方程：
+<span class="math display">\[\begin{equation}
+    \frac{\partial f}{\partial t}+v\nabla\cdot f+\frac Fm\nabla_v\cdot
+f=\left(\frac{\partial f}{\partial t}\right)_{col}
+\end{equation}\]</span></p>
+<p>右端为零的无碰撞方程被称为Vlasov方程。与直接考虑颗粒间相互作用不同，我们可以通过积分这个偏微分方程(PDE)来模拟气体的演化。绝大多数等离子体仿真程序都没有采用这种方法。原因简单且耳熟能详：计算要求仍然大大超出了标准计算系统的能力。这些要求产生于如果保留所有的三个空间和速度分量，则需要存储六维数据。在降维的情况下，直接求解玻尔兹曼方程实际上是非常有吸引力的。我们在第6章考虑这类求解器，即使在保留碰撞的情况下也被混淆地称为Vlasov求解器。</p>
+<h3 id="麦克斯韦-玻尔兹曼分布函数">麦克斯韦-玻尔兹曼分布函数</h3>
+<p>显然，必须有替代方案，因为三维等离子体模拟通常在标准的桌面工作站上进行，网格要细得多。内存需求的大部分来自于每个空间单元中需要的大量速度单元。这些bin中的大部分实际上是空的-这实际上可以在图1.1中看到。因此，可以做一些额外的简化。第一种选择是假设VDF服从一个解析profile。具体来说，我们可以令每个方向上的速度为：
+<span class="math display">\[\begin{equation}\label{equ-1-9}
+    f_M(v)=\frac1{\sqrt{\pi}v_{th}}\exp\left(\frac{-(v-v_d)^2}{v_{th}^2}\right)
+\end{equation}\]</span></p>
+<p>这就是麦克斯韦-玻尔兹曼分布函数。利用量子理论或统计力学可以推导出它实际上是分子布居数的自然最高熵态。假设你有一个初始充满气体的盒子，里面恰好包含两种类型的粒子：以速度A运动的慢分子和以速度B运动的快分子。如果没有外力作用，并且壁面是完全镜面的，那么速度只能通过碰撞来改变。在动量交换碰撞中，速度较快的分子稍微减速，速度较慢的分子加速。碰撞率也与相对速度成反比。最终，在足够长的时间之后，两个最初离散的粒子群合并为一个没有净动量转移的粒子群。麦克斯韦-玻尔兹曼分布对应于这个末态，到达这个末态的过程称为热化。</p>
+<p>利用式<span
+class="math inline">\(\ref{equ-1-9}\)</span>的主要好处是，对于每个维度，VDF减少了到只有两个参数：平均(或漂移)速度<span
+class="math inline">\(v_d\)</span> 和热速度<span
+class="math inline">\(v_{th}\)</span> 。热速度以温度的形式定义，<span
+class="math inline">\(v_{t h}=\sqrt{2 k_B T / m}\)</span>
+。因此，只需六个浮点数就可以完整地描述每个空间单元中的VDF。通常，我们进一步假设各向同性的温度，将所需的内存减少到仅四个值：漂移速度的三个分量<span
+class="math inline">\(\vec{v}_d\)</span>，以及单个量级的热速度。这是对初始粗直方图方法所需的8，000个值的巨大改进!但是生活中没有任何东西是自由的，而且这种做法也不是没有重大的弊端。为了使用方程<span
+class="math inline">\(\ref{equ-1-9}\)</span>，我们要求气体通过一个"足够的时间"到使热化。这一要求并不总能得到满足。碰撞率与数密度成比例，分子在碰撞之间的平均距离由平均自由程给出:
+<span class="math display">\[\begin{equation}
+    \lambda=1/(\sigma n)
+\end{equation}\]</span>
+σ为碰撞截面，将在第4章中详细讨论。n为气体数密度。一个重要的因子，称为Knudsen数，将平均自由程与特征长度联系起来:
+<span class="math display">\[\begin{equation}
+    K_n=\frac\lambda L
+\end{equation}\]</span> 这个长度是“problem
+specific”。在真空室的模拟中，我们可以令L为真空室的直径。如果<span
+class="math inline">\(K_n \ll 1\)</span> ，意味着<span
+class="math inline">\(\lambda \ll L\)</span>
+，每一个分子在壁与壁之间的运动过程中都会发生许多碰撞。这样的<strong>流动</strong>被认为是<strong>连续</strong>的，麦克斯韦VDF可以被认为是有效的。另一方面，如果<span
+class="math inline">\(K_n \gg 1\)</span> ，<span
+class="math inline">\(\lambda \gg
+K\)</span>，分子之间比彼此更容易与壁面发生碰撞。这种状态描述了<strong>自由分子流</strong>。碰撞可以完全忽略，气体动力学由壁面效应驱动。最后，如果<span
+class="math inline">\(K_n \approx 1\)</span>
+，碰撞之间的距离与特征长度相当。在这种情况下，碰撞会发生，但不足以使麦克斯韦形式的VDF具有确定性。这种状态被称为<strong>稀薄气体</strong>，在等离子体中经常遇到。</p>
+<h3 id="流体和动力学方法">流体和动力学方法</h3>
+<p>因此，我们可以将气体模拟方法分为流体和动力学两大类。流体方法假设VDF具有解析形式的连续体。通过计算分布函数的矩，得到了熟悉的气体特性，如密度或平均速度。这些都是f的积分，随着速度提高到越来越高的幂次，并在整个速度空间上进行计算。
+<span class="math display">\[\begin{equation}
+    M^k(\vec{x},t)=\int\vec{v}^kf(\vec{x},\vec{v},t)d\vec{v}
+\end{equation}\]</span></p>
+<p>零阶、一阶和二阶矩导致了质量、动量和能量守恒方程。对于麦克斯韦的VDF，这些矩给出了计算流体力学(
+CFD )中使用的标准Navier-Stokes方程。</p>
+<p>在概率论和统计学中，“moment”
+是描述随机变量分布特征的数学概念。一般来说，“moment”
+描述了随机变量在不同次幂下的期望值。常见的"moment" 包括：</p>
+<ul>
+<li><p>零阶矩（Zeroth
+Moment）：零阶矩是一个随机变量本身的期望值，即数学期望。对于随机变量
+<span class="math inline">\(X\)</span>，其零阶矩 <span
+class="math inline">\(E(X)\)</span> 表示 <span
+class="math inline">\(X\)</span> 的平均值或期望值。</p></li>
+<li><p>一阶矩（First
+Moment）：一阶矩是随机变量与一个常数的乘积的期望值。对于随机变量 <span
+class="math inline">\(X\)</span>，其一阶矩 <span
+class="math inline">\(E(X)\)</span> 表示 <span
+class="math inline">\(X\)</span> 的加权平均值，其中权重为 X
+的概率密度函数。</p></li>
+<li><p>二阶矩（Second
+Moment）：二阶矩是随机变量的平方的期望值。对于随机变量 <span
+class="math inline">\(X\)</span>，其二阶矩 <span
+class="math inline">\(E(X^2)\)</span> 表示 <span
+class="math inline">\(X\)</span> 的平方的平均值。</p></li>
+</ul>
+<p>另一方面，动力学方法不对VDF的形状做任何假设，允许其自洽演化。前面讨论的直接求解器和Vlasov求解器是动力学方法的两个例子。两者均被发现存在计算量过大的问题。幸运的是，存在另一类基于随机(随机)采样的方法。许多速度库中包含零粒子或仅包含少数几个粒子。我们不试图完全求解离散化后的VDF，而是可以生成若干个概率服从分布函数的随机速度样本。该采样过程如图1.2所示。</p>
+<img src="/images/Lubos/latexImage_17e07b708c4fd5bae09514d39b114913.png" class="" width="400" title="Figure 1.2: Comparison of three approaches for representing a velocity distribution function: analytical function (black line), a histogram of discrete velocities (gray bars), and random samples (white circles).">
+<p>利用解析形状表示一维Maxwell -
+Boltzmann分布，并与Vlasov求解速度网格和随机采样进行了比较。我们将这些样本视为粒子，并根据运动方程让它们穿过计算域。在这样做的过程中，它们将离散的速度样本移到新的空间区域。每个粒子被分配一个大粒子权重wmp，这样初始的数密度可以用更少的样本来恢复。</p>
+<p>大粒子(或特定)权重简单来说就是模拟粒子所代表的真实原子、离子或电子的数量。对于常权重的情形，我们有wmp
+= Nreal / Nsim。基于该方法的两种流行方案是粒子模拟(Particle in
+Cell，PIC)方法[15]和直接模拟蒙特卡罗(Direct Simulation Monte
+Carlo，DSMC)方法[12]。PIC只考虑电磁力引起的加速度。DSMC考虑中性气体，只对碰撞进行建模。这两种方法有许多相似之处，并且经常结合起来模拟部分电离的气体。我们在第4章开展了PIC
+-
+DSMC模拟。随机性引入了噪声，可以通过使用更多的样本(粒子)来减少噪声。一旦解停止演化，也可以通过对结果进行长时间间隔的平均来降低噪声。因此，随机方法最适合于达到稳态的问题。</p>
+<h3 id="拉格朗日和欧拉描述">拉格朗日和欧拉描述</h3>
+<p>PIC和Vlasov求解器都是自洽求解VDF的动力学算法。然而，他们以不同的方式对待气体。当PIC跟随单个粒子在区域内运动时，Vlasov求解器使用一个固定的网格来进化气体。这两个模型被称为拉格朗日模型和欧拉模型。因此，我们可以将气体模拟分为四类：</p>
+<ul>
+<li><p>Fluid / Eulerian：计算流体力学( CFD )，磁流体力学( MHD)</p></li>
+<li><p>流体/拉格朗日：光滑粒子流体动力学( SPH )</p></li>
+<li><p>动力学/ Eulerian：Vlasov (直接动力学)求解器</p></li>
+<li><p>动力学/拉格朗日：粒子模拟( PIC )，直接模拟蒙特卡洛(DSMC)</p></li>
+</ul>
+<p>本文未讨论的SPH方法与PIC方法的相似之处在于用拉格朗日粒子表示气体。但与PIC中每个粒子携带离散速度不同，SPH粒子表示具有麦克斯韦漂移速度和温度的流体包裹体。最后，PIC和DSMC方案使用欧拉空间网格。该网格用于计算粒子间相互作用。最近，使用“dynamic
+octrees”的无网格粒子方法取得了很大的进展[26]。由于消除了对空间网格的依赖，这种无网格方法使方法真正具有拉格朗日性质。</p>
+<p>本书的绝大部分内容都致力于动力学PIC方法的研究。原因有二。首先，流体方法与中性气体方法有许多相似之处。与计算流体力学(
+CFD )中求解Navier - Stokes方程不同，磁流体动力学( MHD
+)方程被求解。动力学( CFD )、磁流体动力学( MHD
+)方程求解。求解方案类似，因为它们都涉及控制质量、动量和能量守恒的偏微分方程组的数值积分系统。主要的区别产生于需要考虑电磁场的演化。许多优秀的书籍已经对相关的集成方法进行了全面的调查。</p>
+<p>但为完整起见，第6章对流体求解器进行了说明。流体方法也常用与PIC耦合形成混合方案。在我的电推进领域，直接模拟电子并不常见。取而代之的是“problem-specific
+complexity”的流体模型。其次，PIC方法的通用性更强。流体方法仅限于连续介质区域。另一方面，<strong>PIC可以在整个克努森数范围内使用</strong>，尽管它们最适合稀薄和自由分子流。PIC的局限性来自于效率，而不是关于VDF的一些固有假设。将PIC应用于连续介质流动需要比流体方法大得多的计算资源，但最终也得到了相同的结果。反之则不成立，因为流体方法不能模拟速度分布为非麦克斯韦分布的稀薄气体。</p>
+<h3 id="流体方法和动力学方法的比较">流体方法和动力学方法的比较</h3>
+<p>为了说明流体方法和粒子方法的区别，我们考虑中性气体绕球流动的模拟。从流体方法开始，我们可以利用对气体动力学(或者查阅相应的工具书)的理解，得到关于质量、动量和可能的能量守恒的偏微分方程。计算温度需要能量方程，但通常我们假设温度保持不变。例如，我们可以得到如下密度和动量表达式：
+<span class="math display">\[\begin{equation}
+    \begin{aligned}
+\frac{\partial n}{\partial t}+\nabla\cdot(n\vec{u})&amp; =0  \\
+mn\left[\frac{\partial\vec{v}}{\partial
+t}+(\vec{v}\cdot\nabla)\vec{v}\right]&amp; =\vec{F}-\nabla
+p-mn\nu\vec{v}
+\end{aligned}
+\end{equation}\]</span></p>
+<p>这些方程的细节目前并不重要。相反，我们应该注意到，两者都包含一个时间导数项∂(
+) /∂t和一个或多个仅依赖于空间性质(如<span
+class="math inline">\(\vec{F}\)</span>力项或碰撞阻力项<span
+class="math inline">\(mnν\vec{v}\)</span>
+)或其导数(压力梯度项∇p)的项。因此，方程可以被重写成一种形式: <span
+class="math display">\[\begin{equation}
+    \frac{\partial()}{\partial t}=G(X(\vec{x},t))
+\end{equation}\]</span></p>
+<p>式中：G为t时刻空间变化的气体状态X
+(密度、速度、压力等)的函数。从这种形式可以看出，<strong>流体模拟涉及密度、速度等微分方程的时间积分</strong>。该方案一般涉及将时域划分为由一个小的∆t时间步分隔的状态。将物理域离散为空间网格。这种方法是必要的，因为有限的计算机内存并不能解决连续的现实世界中无限多的信息。</p>
+<p>然后进行积分，从初始条件开始，直到满足退出准则。这可能涉及到模拟一个指定的实时，或者模拟达到稳态，其中感兴趣的属性不再变化，∂(
+) /∂t = 0。</p>
+<p>构成空间域的块被称为cell。cell角被称为节点，在邻居cell之间共享。cell一般可以具有任意形状，但它们不应该重叠。如果单元格的排序遵循逻辑结构，则单元格的集合称为模拟网格或模拟网格。</p>
+<img src="/images/Lubos/latexImage_247568ef256a6e4f13e79ff35d0a948f.png" class="" width="400" title="Fig. 1.3 Comparison of a ﬂuid (top) and particle (bottom) approach.">
+<p>图1.3所示为均匀的笛卡尔网格，该网格为立方、等维单元格，单元格边缘与3个坐标轴对齐。这种类型的网格由于其简单性，在数值模拟中无处不在。</p>
+<p>模拟网格使得在感兴趣的属性如密度或速度是已知的地方定义离散点成为可能。最明显的两个选择是节点和cell中心。除非另有说明，本书中开发的所有模拟都使用了<strong>以节点为中心</strong>的方法。然后将控制方程转换为一种形式，从而令使用基于网格的数据对其进行评估成为可能。</p>
+<p>我们还指定了控制气体如何进入和离开计算域的边界条件。例如，在x方向上可以给定恒定的密度<span
+class="math inline">\(n = n_0\)</span> 和非零的流速，<span
+class="math inline">\(\vec{u}=u_0 \hat{i}\)</span>(在<span
+class="math inline">\(x_{min}\)</span>
+ 入口平面上)。我们还指定了嵌入边界的条件。在图1.3中，这些节点通过灰色阴影显示出来。从图中可以推断出，光滑的几何结构变成了退化的“sugarcube”
+(或楼梯情况)表示。这种无法解析复杂几何是笛卡尔网格的主要局限性。一些解决方法涉及使用自适应网格细化或切割单元格。在第7章中，我们将看到如何利用非均匀网格来解决这个问题。</p>
+<p>可以通过在属于球体的节点上设置离子密度为零，<span
+class="math inline">\(n =
+0\)</span>，来模拟离子在表面的中和损失。这是<strong>狄利克雷边界条件</strong>的一个例子。该条件为未知量规定了实际值。它并非处处适用。</p>
+<p>我们事先并不知道下游的密度，<span class="math inline">\(x =
+x_{max}\)</span>
+面。指定Dirichlet边界条件将是不正确的。相反，我们告诉代码应该充分发展流动，要求在垂直于边界(或法向)的方向上没有变化，<span
+class="math inline">\(\partial n / \partial \hat{n} \equiv \partial n /
+\partial x=0\)</span>
+。这是<strong>Neumann边界条件</strong>的一个例子。其他类型也有，包括Robin和Cauchy，但出现的次数要少得多。</p>
+<p>在下半部分可视化的粒子法根本不利用任何宏观控制方程。它只是简单地根据某种源模型将粒子注入到计算域中。这里我们在<span
+class="math inline">\(x_{min}\)</span>
+面上注入粒子。选择注入粒子的数量，使其达到所需的密度。初始速度由入口速度分布函数采样得到。我们通过离散Δt时间步，积分运动方程1.1来推进粒子的速度和位置。</p>
+<p>我们首先通过考虑作用在每个粒子上的力来计算每个粒子的新速度。我们也可以考虑碰撞。然后我们通过积分速度将粒子推向新的位置。边界条件现在控制着单个颗粒的微观行为。中性粒子撞击球体后可能发生漫反射脱落，而离子则可能重新组合成原子。如果模拟的问题具有空间对称性，那么离开计算域的粒子可能被移除或反射回来。</p>
+<p>粒子模拟与流体模拟的不同之处在于，在每个时间步，模拟只由大量离散的位置和速度对组成。我们通常感兴趣的是计算体积密度、速度和温度。从微观粒子数据中获得这些宏观性质需要一些额外的平均。这一般是在计算网格的帮助下完成的。由于数密度只是粒子数除以cell体积，因此可以通过计算每个cell中的粒子数得到局部数密度。气速和温度可以通过类似的方式获得。</p>
+<h2 id="静电pic">静电PIC</h2>
+<p>假设空间某一小区域包含N个真实离子，用局部速度分布函数<span
+class="math inline">\(f\)</span>来描述。我们可以通过从VDF中采样<span
+class="math inline">\(M\)</span>个模拟粒子来近似这个“population”。这个小得多的样本代表了整个粒子群，因此每个粒子对应于<span
+class="math inline">\(w_{mp} = N / M\)</span> 的实际离子或电子。</p>
+<p>每个模拟粒子带着离散速度产生，并携带动量<span
+class="math inline">\(w_{mp}m\vec{v}\)</span>。同样，对于局域数和电荷密度计算，粒子贡献<span
+class="math inline">\(w_{mp}\)</span>个计数和<span
+class="math inline">\(w_{mp}q\)</span> 电荷。速度和位置根据质量为<span
+class="math inline">\(m\)</span> 、电荷为<span
+class="math inline">\(q\)</span>
+的单个物理离子或电子的质量和电荷进行更新。为了避免混淆用于移动粒子的电荷和对电荷密度的贡献，将每个大粒子设想为一堆<span
+class="math inline">\(w_{mp}\)</span>的真实离子或电子协同移动。</p>
+<h3 id="洛伦兹力">洛伦兹力</h3>
+<p>粒子按前面讨论的运动方程运动，力按方程1.5计算。然而，我们没有使用库仑定律，而是使用如下方程求解洛伦兹力：
+<span class="math display">\[\begin{equation}
+    \vec{F}=q\left(\vec{E}+\vec{v}\times\vec{B}\right)
+\end{equation}\]</span></p>
+<h3 id="麦克斯韦方程组">麦克斯韦方程组</h3>
+<p><span class="math display">\[\begin{equation}
+    \begin{aligned}\text{Gauss&#39;
+law:}&amp;\quad\nabla\cdot\vec{E}=\frac\rho{\epsilon_0}\\
+    \text{Gauss&#39; law for magnetism:}&amp;\quad\nabla\cdot\vec{B}=0\\
+    \text{Faraday&#39;s
+law:}&amp;\quad\nabla\times\vec{E}=-\frac{\partial\vec{B}}{\partial t}\\
+    \text{Ampere&#39;s
+law:}&amp;\quad\nabla\times\vec{B}=\mu_0\left(\vec{j}+\epsilon_0\frac{\partial\vec{E}}{\partial
+t}\right)\end{aligned}
+\end{equation}\]</span></p>
+<p>此处，<span class="math inline">\(\rho \equiv \Sigma_s q_s
+n_s\)</span>是电荷密度，<span class="math inline">\(\vec{j}\equiv
+\Sigma_s q_s n_s \vec{v_s}\)</span>
+是电流密度。法拉第定律告诉我们，如果<span
+class="math inline">\(\partial\vec{B}/\partial t=0\)</span>，则<span
+class="math inline">\(\nabla\times\vec{E}=0\)</span>。具有零旋度的向量场被称为无旋的。</p>
+<p>亥姆霍兹分解也被称为向量微积分的基本定律，进一步告诉我们，任何足够光滑的向量场<span
+class="math inline">\(\vec{F}\)</span>都可以分解为无旋(无旋度)和“solenoidal”(无散度)两部分。这两部分可以用一个标量势(对于无旋)和一个矢量势(对于solenoidal势)来定义。
+<span class="math display">\[\begin{equation}
+    \vec F=-\nabla\phi+\nabla\times\vec A
+\end{equation}\]</span></p>
+<p>因此，如果磁场恒定(电场无旋)，则： <span
+class="math display">\[\begin{equation}\label{1-22}
+    \vec{E}=-\nabla\phi
+\end{equation}\]</span></p>
+<p><strong>磁场不随时间变化，就是所谓的静电假设</strong>。由于安培定律表明磁场由电流产生，因此该条件意味着电流密度足够低，自感应磁场可以忽略不计。此外，如果存在外部磁体，则所施加的磁场不能随时间变化。</p>
+<h3 id="泊松方程">泊松方程</h3>
+<p>静电假设极大地简化了剩余的分析。将方程<span
+class="math inline">\(\ref{1-22}\)</span>代入高斯定律可得： <span
+class="math display">\[\begin{equation}
+    \nabla\cdot(-\nabla\phi) =\frac\rho{\epsilon_0}
+\end{equation}\]</span></p>
+<p>or</p>
+<p><span class="math display">\[\begin{equation} \label{1-24}
+    \nabla^2\phi =-\frac\rho{\epsilon_0}
+\end{equation}\]</span></p>
+<p>这是泊松方程，它构成了cell中静电粒子( ES-PIC
+)方法的基础。它提供了等离子体电势和电荷密度之间的关系。电荷密度简单地说是单个“species”的数密度按其电荷标度的总和。在只含有单电荷和双电荷离子和电子的系统中，我们有<span
+class="math inline">\(\rho= \text{e}( n_i +
+2n_{i2}-n_{\text{e}})\)</span>，其中e是基本电荷。双电荷离子的密度可以用单电荷布居数(“population”)来替代，<span
+class="math inline">\(n_{i2} = kn_{i}\)</span>，其中<span
+class="math inline">\(k\)</span>为某一分数。</p>
+<p>然后我们有：<span
+class="math inline">\(\rho=e[(1+2k)n_i-n_e]=e(Z_in_i-n_e)\)</span>
+，<span class="math inline">\(Z_i\)</span>项是平均电离态。</p>
+<p>该方法最具吸引力之处在于认识到<strong>电荷密度是宏观性质</strong>。实际上，这意味着我们依据模拟网格来定义密度。
+网格节点的数量G远小于计算粒子的数量M。 运行次数减少至：</p>
+<ul>
+<li><p>计算电荷密度，需要运行M次 (整个粒子循环)；</p></li>
+<li><p>求解泊松方程，需要运行G log(G)次，(整个网格节点的循环)；</p></li>
+<li><p>计算电场，运行G次，(整个网格节点的循环)；</p></li>
+<li><p>粒子位置的积分，M次 (整个粒子循环)；</p></li>
+</ul>
+<h3 id="模拟的主循环">模拟的主循环</h3>
+<p>对于PIC方法，首先将计算域离散成模拟网格。在每一个时间步，我们使用粒子位置来计算数密度。
+然后，使用相应的电荷密度并利用方程<span
+class="math inline">\(\ref{1-24}\)</span>来计算等离子体势。
+一旦知道电势，就可以从方程<span
+class="math inline">\(\ref{1-22}\)</span>中得到电场。
+根据电场产生的洛伦兹来更新粒子速度。
+新的速度将push粒子到新的位置，然后重复整个过程。
+一般的ES-PIC算法遵从如下步骤：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化</span></span><br><span class="line">求解初始位置</span><br><span class="line">计算电场</span><br><span class="line">载入粒子</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟循环</span></span><br><span class="line">主循环：</span><br><span class="line">    <span class="comment">// 场</span></span><br><span class="line">    计算电荷密度</span><br><span class="line">    计算电势</span><br><span class="line">    计算电场</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 粒子</span></span><br><span class="line">    更新粒子速度</span><br><span class="line">    更新粒子位置</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 可选步骤</span></span><br><span class="line">    执行碰撞</span><br><span class="line">    注入额外粒子</span><br><span class="line">    输出 diagnostics</span><br><span class="line"></span><br><span class="line"><span class="comment">// 终止</span></span><br><span class="line">输出结果</span><br></pre></td></tr></table></figure>
+<p>模拟主循环会持续运行直至满足某个退出条件。这可能包括完成预设的实际时间，或者达到稳态。循环结束后，我们通常会保存最终结果并进行额外的终态处理。在第七章讨论到的电磁PIC（EM-PIC）遵循类似的流程，但其推进电场和磁场的方法则有所不同</p>
+<h2 id="单粒子运动">单粒子运动</h2>
+<p>现在通过简单的例子展示PIC的核心概念。假定两接地电极之间存在电荷密度<span
+class="math inline">\(\rho_0\)</span>均匀的粒子，如下图所示。此外，假定电极是无限大的，因此电荷密度是均匀的，且等离子体仅与<span
+class="math inline">\(x\)</span>方向有关。这是一个一维问题的例子。</p>
+<img src="/images/Lubos/latexImage_6da4fa83eeaa26a11ab1e00c14cf882e.png" class="" width="400" title="Figure 1.4 Simulation domain for the single particle motion example">
+<p>假定该区域仅存在离子，<span class="math inline">\(\rho_0 = e
+n_i\)</span>。对于<span class="math inline">\(\rho_0
+&gt;0\)</span>，两壁之间的电势为正。
+若在靠近某一电极处放一静止电子，那么电子将会向势能顶部移动，在那里达到最大速度。接着它沿山下坡，一路减速，直至速度再次降为零。然后运动方向反转，电子继续以这种来回振动的方式运动。</p>
+<p>当然，该模型忽略了任何的摩擦(或碰撞)损失。为了develop模拟，假定背景离子密度保持不变，而且足够高，以至于单个电子所带的电荷对电势分布的影响可以忽略不计。这便使得我们只需计算一次势能。余下的代码仅仅涉及更新电子的位置。我们有如下的伪代码：
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">求解势</span><br><span class="line">计算电场</span><br><span class="line">载入粒子</span><br><span class="line"></span><br><span class="line">主循环：</span><br><span class="line">    更新粒子速度</span><br><span class="line">    更新粒子位置</span><br><span class="line">    write diagnostics</span><br></pre></td></tr></table></figure></p>
+<h3 id="域离散化">域离散化</h3>
+<p>如前所述，我们利用计算网格来描述电势、电荷密度以及电场的空间变化。在计算机实现中，这涉及到为每个变量分配一个内存数组，用于存储<span
+class="math inline">\(n_i\)</span>个浮点数值，其中<span
+class="math inline">\(n_i\)</span>表示网格节点的数量。在经典的C++中，数组可以通过new运算符进行动态分配。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 常数</span></span><br><span class="line"><span class="keyword">namespace</span> Const&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> QE = <span class="number">1.602176565e-19</span>; <span class="comment">// 单位电荷，单位C</span></span><br><span class="line">&#125;；</span><br><span class="line"><span class="comment">// </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> ni = <span class="number">21</span>;  <span class="comment">// 网格点数</span></span><br><span class="line">    <span class="type">double</span> *phi = <span class="keyword">new</span> <span class="type">double</span>[ni]; <span class="comment">//势</span></span><br><span class="line">    <span class="type">double</span> *rho = <span class="keyword">new</span> <span class="type">double</span>[ni]; <span class="comment">//电荷密度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建了一个具有 ni 个元素的 double 类型的动态数组，并用指针 phi 指向它。通过动态分配内存，我们可以在运行时决定数组的大小，并且在不再需要它时可以手动释放内存。记得在程序的适当位置使用 delete[] phi; 来释放内存，防止内存泄漏。</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化数据</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;&lt;ni; i++)&#123;</span><br><span class="line">        phi[i] = <span class="number">0</span>;</span><br><span class="line">        rho[i] = Const::QE*<span class="number">1e12</span>; <span class="comment">//电荷密度</span></span><br><span class="line">        ef[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* rest of the code goes here */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">delete</span> [] phi;  <span class="comment">//存储清理</span></span><br><span class="line">    <span class="keyword">delete</span> [] rho;</span><br><span class="line">    <span class="keyword">delete</span> [] ef;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种方法有多个缺点。首先，默认情况下分配的数据并未进行初始化。每个数组组件最初仅仅包含分配给它的内存位置上存在的某些随机字节。在使用之前，我们需要手动将每个条目设置为零（或者其他有意义的值）。其次，我们需要记住，在数组不再需要时，使用delete[]运算符来释放内存。</p>
+<p>一种更干净的方法是使用C++标准库中的std::vector容器。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="comment">// vector 是一个非常有用的容器类，它提供了动态数组的功能</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;    <span class="comment">// 在代码中直接使用 vector 类型和相关的函数，而无需写全限定名 std::vector。</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> ni = <span class="number">21</span>;</span><br><span class="line">    <span class="function">vector&lt;<span class="type">double</span>&gt; <span class="title">phi</span><span class="params">(ni)</span></span>; <span class="comment">//ni doubles的空间，所有均设为零；</span></span><br><span class="line">    <span class="function">vector&lt;<span class="type">double</span>&gt; <span class="title">rho</span><span class="params">(ni, Const::QE*<span class="number">1e12</span>)</span></span>; <span class="comment">// set to QE*1e12, rho 中包含了ni个值为QE*1e12的元素</span></span><br><span class="line">    <span class="function">vector&lt;<span class="type">double</span>&gt; <span class="title">ef</span><span class="params">(ni)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* rest of the code goes here */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;    <span class="comment">// normal exit</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可以注意到两个主要的区别：</p>
+<ul>
+<li><p>不再需要初始化数据。它会被自动设置为零，除非提供了不同的值，如电荷密度那样。</p></li>
+<li><p>也不需要手动释放内存--当主程序块退出并且向量变量的作用域结束时，这会自动发生。</p></li>
+</ul>
+<p>std::vector
+是一个模板容器，能够存储任意类型的数据。<double>模块参数告诉编译器，我们需要一个用于存储双精度浮点数的容器。</p>
+<p>有时候，频繁地输入这些参数可能会变得繁琐。为了解决这个问题，我们可以通过使用指令来定义一个新的类型，叫做dvector。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;  </span><br><span class="line"><span class="keyword">using</span> dvector = vector&lt;<span class="type">double</span>&gt;;    <span class="comment">// 定义一个“nickname”</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> ni = <span class="number">21</span>;</span><br><span class="line">    <span class="function">dvector <span class="title">phi</span><span class="params">(ni)</span></span>;  <span class="comment">// ni double 以存储 potential</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* rest of the code */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种使用关键字的语法是在C++11语言扩展中引入的。另外，我们也可以利用传统的typedef关键字。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> dvector vector&lt;<span class="type">double</span>&gt;;   <span class="comment">// 一个在C++11之前的旧方法</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>至今为止，我们仅仅指定了网格的分辨率。但我们尚未包含与其对应的实际物理区域的信息。
+在x方向上均匀分布的笛卡尔网格具有如下位置的节点： <span
+class="math display">\[\begin{equation}
+    x=x_0+i\Delta x\quad i\in[0,c_i]
+\end{equation}\]</span></p>
+<p>其中<span
+class="math inline">\(c_i\)</span>是x方向的cells数量。或者说： <span
+class="math display">\[\begin{equation}
+    \Delta x=L/c_i
+\end{equation}\]</span></p>
+<p>节点的数量为<span class="math inline">\(n_i = c_i +
+1\)</span>，因此上述方程也可以写为： <span
+class="math display">\[\begin{equation}
+    \Delta x=\frac{x_m-x_0}{n_i-1}
+\end{equation}\]</span></p>
+<p>此处，<span class="math inline">\(L = x_m
+-x_0\)</span>表示x值最大的点到原点的距离. 根据图1.4的示意图，我们有<span
+class="math inline">\(x_0 = 0\)</span>和$x_m = 0.1 $
+m。我们添加代码来设置这些参数。我们还包括一个将网格域输出到逗号分隔文件(.csv)的函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 常数</span></span><br><span class="line"><span class="keyword">namespace</span> Const &#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> QE = <span class="number">1.602176565e-19</span>; <span class="comment">// C, 电子电荷</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> EPS0 = <span class="number">8.85418782e-12</span>; <span class="comment">// C/V/m，电介质常数</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> ME = <span class="number">9.10938215e-31</span>; <span class="comment">// kg, 电子质量</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> Const; <span class="comment">// 避免经常写 Const::QE</span></span><br><span class="line"><span class="keyword">using</span> dvector = vector&lt;<span class="type">double</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// function prototypes</span></span><br><span class="line"><span class="comment">// 布尔值，指示操作是否成功</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">outputCSV</span><span class="params">(<span class="type">double</span> x0, <span class="type">double</span> dx, <span class="type">const</span> dvector &amp;phi, <span class="type">const</span> dvector &amp;rho, <span class="type">const</span> dvector &amp;ef)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> ni = <span class="number">21</span>;  <span class="comment">// 节点数量</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> x0 = <span class="number">0</span>;    <span class="comment">//  网格起点</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> xm = <span class="number">0.1</span>;  <span class="comment">//   相反端</span></span><br><span class="line">    <span class="type">double</span> dx = (xm-x0)/(ni<span class="number">-1</span>); <span class="comment">// 节点空间</span></span><br><span class="line"></span><br><span class="line">    <span class="function">dvector <span class="title">phi</span><span class="params">(ni)</span></span>;</span><br><span class="line">    <span class="function">dvector <span class="title">rho</span><span class="params">(ni, QE*<span class="number">1e12</span>)</span></span>;</span><br><span class="line">    <span class="function">dvector <span class="title">ef</span><span class="params">(ni)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// output to a CSV file for plotting</span></span><br><span class="line">    <span class="built_in">outputCSV</span>(x0, dx, phi, rho, ef);   <span class="comment">// ef, 电场</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;   <span class="comment">// normal exit</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出给定的场到CSV文件中，输出成功则返回true</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">outputCSV</span><span class="params">(<span class="type">double</span> x0, <span class="type">double</span> dx, <span class="type">const</span> dvector &amp;phi, <span class="type">const</span> dvector &amp;rho, <span class="type">const</span> dvector &amp;ef)</span></span>&#123;</span><br><span class="line">    <span class="function">ofstream <span class="title">out</span><span class="params">(<span class="string">&quot;results.csv&quot;</span>)</span></span>;    <span class="comment">// open file for writing, ofstream类是包含在头文件 &lt;fstream&gt;中的</span></span><br><span class="line">    <span class="keyword">if</span> (!out)&#123;</span><br><span class="line">        cerr&lt;&lt;<span class="string">&quot;Could not open output file !&quot;</span>&lt;&lt;endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    out&lt;&lt;<span class="string">&quot;x,phi,rho,ef\n&quot;</span>;   <span class="comment">// write header</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>;i&lt;phi.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">        out&lt;&lt;x0+i*dx;   <span class="comment">// 写入i-th位置</span></span><br><span class="line">        out&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;phi[i]&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;rho[i]&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;ef[i];  <span class="comment">//写入值</span></span><br><span class="line">        out&lt;&lt;<span class="string">&quot;\n&quot;</span>;  <span class="comment">//新一行，没有使用endl，以避免buffer flush</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;    <span class="comment">//当输出goes out of scope时，文件自动关闭</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译和运行： <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo g++ ch1_01.cpp</span><br><span class="line">./a.out</span><br></pre></td></tr></table></figure></p>
+<p>python 代码实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.constants <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># 该模块包含了所需的真空介电常数: epsilon_0、电子电荷: e、电子质量m_e: 9.10938215e-31;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义常量</span></span><br><span class="line">ni = <span class="number">21</span>;  <span class="comment"># 节点数量</span></span><br><span class="line">x0 = <span class="number">0</span>;    <span class="comment">#  网格起点</span></span><br><span class="line">xm = <span class="number">0.1</span>;  <span class="comment">#   相反端</span></span><br><span class="line">dx = (xm-x0)/(ni-<span class="number">1</span>); <span class="comment"># 节点空间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建存储数组</span></span><br><span class="line">phi = np.zeros(ni)</span><br><span class="line">rho = np.full(ni, e*<span class="number">1e12</span>) <span class="comment"># np.full(shape, fill_value, dtype=None, order=&#x27;C&#x27;)</span></span><br><span class="line">ef = np.zeros(ni)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存成csv文件</span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># 打开 CSV 文件并创建写入对象</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;results.csv&#x27;</span>, mode=<span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    writer = csv.writer(file)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 写入第一行数据</span></span><br><span class="line">    writer.writerow([<span class="string">&quot;x&quot;</span>, <span class="string">&quot;phi&quot;</span>, <span class="string">&quot;rho&quot;</span>, <span class="string">&quot;ef&quot;</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(phi)):</span><br><span class="line">        writer.writerow([x0+i*dx, phi[i], rho[i], ef[i]])</span><br></pre></td></tr></table></figure>
+<p>Julia代码的实现：</p>
+<figure class="highlight julia"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> PhysicalConstants.CODATA2018 <span class="comment"># 基于国际科学和技术数据委员会（CODATA）发布的2018年常数集</span></span><br><span class="line"><span class="keyword">using</span> CSV</span><br><span class="line"><span class="keyword">using</span> DataFrames</span><br><span class="line"><span class="keyword">using</span> LinearAlgebra</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义常量</span></span><br><span class="line">ni = <span class="number">21</span>  <span class="comment"># 节点数量</span></span><br><span class="line">x0 = <span class="number">0.0</span>  <span class="comment"># 网格起点</span></span><br><span class="line">xm = <span class="number">0.1</span>  <span class="comment"># 相反端</span></span><br><span class="line">dx = (xm - x0) / (ni - <span class="number">1</span>)  <span class="comment"># 节点空间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建存储数组</span></span><br><span class="line">phi = zeros(ni)</span><br><span class="line">rho = fill(PhysicalConstants.CODATA2018.e * <span class="number">1e12</span>, ni) <span class="comment"># fill(x, dims)</span></span><br><span class="line">ef = zeros(ni)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建DataFrame来存储数据</span></span><br><span class="line">data = DataFrame(x = x0 .+ (<span class="number">0</span>:ni-<span class="number">1</span>) .* dx, phi = phi, rho = rho, ef = ef)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存成csv文件</span></span><br><span class="line">CSV.write(<span class="string">&quot;results.csv&quot;</span>, data)</span><br><span class="line"></span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+<h3 id="有限差分方法">有限差分方法</h3>
+<p>为了得出等离子体势<span
+class="math inline">\(\phi\)</span>，需要求解泊松方程<span
+class="math inline">\(\epsilon_0\nabla^2\phi =
+-\rho/\epsilon_0\)</span>。 对于此处考虑的恒定电荷密度<span
+class="math inline">\(\rho_0 = en_0\)</span>的情况，是有解析解的： <span
+class="math display">\[\begin{equation}
+    \begin{aligned}
+\frac{\partial^2\phi}{\partial x^2}&amp; =-\frac{\rho_0}{\epsilon_0}  \\
+\frac{\partial\phi}{\partial x}&amp; =-\frac{\rho_0}{\epsilon_0}x+A  \\
+\phi &amp; =-\frac\rho{\epsilon_0}\frac{x^2}2+Ax+B
+\end{aligned}
+\end{equation}\]</span></p>
+<p>积分常数由边界条件设定。<span
+class="math inline">\(x=0\)</span>处<span
+class="math inline">\(\phi=0\)</span>，因此<span
+class="math inline">\(B=0\)</span>。 同样地，<span
+class="math inline">\(x=L\)</span>处<span
+class="math inline">\(\phi=0\)</span>，因此有<span
+class="math inline">\(\begin{aligned}A=\rho_0L/(2\epsilon_0)\end{aligned}\)</span>。
+则势的解析表达式为： <span class="math display">\[\begin{equation}
+    \phi=\frac{\rho_0}{2\epsilon_0}x(L-x)
+\end{equation}\]</span></p>
+<p>由<span class="math inline">\(E=-\partial\phi/\partial
+x\)</span>可得： <span class="math display">\[\begin{equation}
+    \begin{aligned}E=\frac\rho{\epsilon_0}\left(x-\frac
+L2\right)\end{aligned}
+\end{equation}\]</span></p>
+<p>事实上，实际问题肯定没有如此优雅的解析解。因此，我们必须重写方程从而可以通过计算机进行求解。</p>
+<p>有三种主要的可用方法：有限差分方法(FDM)、有限体积法(FVM)以及有限元方法(FEM)。
+该书三种方法都有所涉及，先从FDM开始。 对于FDM，我们运用泰勒级数。 <span
+class="math display">\[\begin{equation}
+    \begin{aligned}f(x+\Delta x)&amp;=f(x)+\frac{\Delta
+x}{1!}\frac{\partial f}{\partial x}+\frac{(\Delta
+x)^2}{2!}\frac{\partial^2f}{\partial x^2}+\frac{(\Delta
+x)^3}{3!}\frac{\partial^3f}{\partial x^3}+\ldots\end{aligned}
+\end{equation}\]</span></p>
+<p><span class="math display">\[\begin{equation}
+    \begin{aligned}f(x-\Delta x)&amp;=f(x)-\frac{\Delta
+x}{1!}\frac{\partial f}{\partial x}+\frac{(\Delta
+x)^2}{2!}\frac{\partial^2f}{\partial x^2}-\frac{(\Delta
+x)^3}{3!}\frac{\partial^3f}{\partial x^3}+\ldots\end{aligned}
+\end{equation}\]</span></p>
+<p>将上述两方程相加，且令<span class="math inline">\(f_i\equiv
+f(x_i)\)</span>、<span class="math inline">\(f_{i+1} \equiv f(x+\Delta
+x)\)</span>以及<span class="math inline">\(f_{i-1}\equiv f(x-\Delta
+x)\)</span>，则有： <span class="math display">\[\begin{equation}
+    \begin{aligned}f_{i+1}+f_{i-1}=2f_i+\Delta^2x\frac{\partial^2f}{\partial
+x^2}+\text{HOT}\end{aligned}
+\end{equation}\]</span></p>
+<p>HOT是高阶项(Higher Order Terms)，此外<span
+class="math inline">\(\Delta^2x \equiv(\Delta x)^2\)</span>。由于<span
+class="math inline">\(\Delta
+x&lt;&lt;1\)</span>，因此上述方程等号右侧第二项可忽略。
+从而得到的方程是二阶精确的。我们使用一个"大O
+"符号来识别这个截断误差，记为<span
+class="math inline">\(O(2)\)</span>。</p>
+<p>下一步可以重新书写上述方程以分离导数项。 <span
+class="math display">\[\begin{equation}\label{1-36}
+    \begin{aligned}\frac{\partial^2f}{\partial
+x^2}=\frac{f_{i-1}-2f_i+f_{i+1}}{\Delta^2x}+O(3)\end{aligned}
+\end{equation}\]</span> 这个表达式被称为二阶导数的标准中心差分。</p>
+<h3 id="势求解器">势求解器</h3>
+<p>泊松方程在域内处处成立。在每个内部节点上我们都有 <span
+class="math display">\[\begin{equation}
+    \begin{aligned}\frac{\partial^2\phi}{\partial
+x^2}=-\frac{\rho_i}{\epsilon_0}\quad i\in[1,n_i-2]\end{aligned}
+\end{equation}\]</span></p>
+<p>根据方程<span
+class="math inline">\(\ref{1-36}\)</span>可将上式改写为： <span
+class="math display">\[\begin{equation}
+    \frac{\phi_{i-1}-2\phi_i+\phi_{i+1}}{\Delta^2x}=-(\rho_i/\epsilon_0)\quad
+i\in[1,n_i-2]
+\end{equation}\]</span></p>
+<p>对于<span class="math inline">\(n_i\)</span>个未知量有<span
+class="math inline">\(n_i-2\)</span>个方程。通过指定最左端和最右端节点的边界条件来close
+the system。 由于两端节点上的电势是固定的，因此采用狄利克雷边界，<span
+class="math inline">\(\phi_0=\phi_{ni-1}=0\text{ V}\)</span>。
+作为一个例子，我们考虑一个只有七个节点的网格。泊松方程的有限差分法公式产生了下面的方程：
+<span class="math display">\[\begin{equation}
+    \begin{aligned}
+\phi_0&amp; =\phi_{\boldsymbol{left}}  \\
+(1/\Delta^2x)\left(\phi_0-2\phi_1+\phi_2\right)&amp;
+=-\rho_1/\epsilon_1  \\
+(1/\Delta^2x)\left(\phi_1-2\phi_2+\phi_3\right)&amp;
+=-\rho_2/\epsilon_2  \\
+(1/\Delta^2x)\left(\phi_2-2\phi_3+\phi_4\right)&amp;
+=-\rho_3/\epsilon_3  \\
+(1/\Delta^2x)\left(\phi_3-2\phi_4+\phi_5\right)&amp;
+=-\rho_4/\epsilon_4  \\
+(1/\Delta^2x)\left(\phi_4-2\phi_5+\phi_6\right)&amp;
+=-\rho_5/\epsilon_5  \\
+\phi_{6}&amp; =\phi right
+\end{aligned}
+\end{equation}\]</span></p>
+<p>我们可以用矩阵表示法重写这个system (入下图所示)。</p>
+<img src="/images/Lubos/latexImage_4ac5dd0f0f2a3fbf2514a5a8017c00af.png" class="" width="400" title="Figure 1.5: One dimensional Poisson equation coeﬃcient matrix for a mesh with 7 nodes and Dirichlet boundary conditions.">
+<p>任何线性的矩阵系统可以通过在两边乘矩阵的逆进行求解，<span
+class="math inline">\(\mathbf{A}^{-1}\mathbf{A}\vec{\phi}=\mathbf{A}^{-1}\vec{b}\)</span>。
+这个公式假设逆矩阵存在：矩阵不奇异。矩阵的逆与矩阵相乘就是单位矩阵，因此有<span
+class="math inline">\(\vec{\phi}=\mathbf{A}^{-1}\vec{b}\)</span>。
+然而，求解矩阵的逆计算量非常的大。此外，此外，泊松方程的系数矩阵仅由以主对角线为中心的少数非零带组成。
+这是带状矩阵的一个例子，它本身就是稀疏矩阵的一种类型。
+通过只记录非零元素，稀疏矩阵可以被有效地存储。逆矩阵失去了这种带状结构，并且包含了更多的非零元素。</p>
+<h4 id="tridiagonal-算法">Tridiagonal 算法</h4>
+<p>大多数代码中采用的方法是计算给定系统的解，而不需要显式地计算逆。矩阵求解器可以分为两类：直接求解器和迭代求解器。
+直接求解器利用矩阵数据中的一些固有结构，在固定的迭代次数内产生精确解。
+我们令<span class="math inline">\(\vec{a}\)</span>和<span
+class="math inline">\(\vec{c}\)</span>分别代表主对角线<span
+class="math inline">\(\vec{b}\)</span>左边和右边的系数，并标记右边的向量为<span
+class="math inline">\(\vec{d}\)</span>。
+算法由两步组成，首先，向前sweep，我们将系数修改为：</p>
+<p><span class="math display">\[\begin{equation}
+    \left.c_i&#39;=\left\{\begin{array}{ll}\frac{c_i}{b_i},&amp;;i=0\\\frac{c_i}{b_i-a_ic_{i-1}^{\prime}}&amp;;i=1,\ldots,n-2\end{array}\right.\right.
+\end{equation}\]</span> 以及 <span
+class="math display">\[\begin{equation}
+    \left.d_i^{\prime}=\left\{\begin{array}{ll}\frac{d_i}{b_i},&amp;;i=0\\\frac{d_i-a_id_{i-1}^{\prime}}{b_i-a_ic_{i-1}^{\prime}}&amp;;i=1,\ldots,n-2\end{array}\right.\right.
+\end{equation}\]</span></p>
+<p>然后，向后代换得： <span class="math display">\[\begin{equation}
+    \begin{aligned}x_{n-1}&amp;=d_{n-1}^{\prime}\\
+    x_i&amp;=d_i^{\prime}-c_i^{\prime}x_{i+1}\ \ \ \ \
+\  ;i=n-2,\ldots,0
+    \end{aligned}
+\end{equation}\]</span></p>
+<p>算法实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">solvePotentialDirect</span><span class="params">(<span class="type">double</span> dx, dvector &amp;phi, <span class="type">const</span> dvector &amp;rho)</span></span>&#123;    <span class="comment">//void 函数返回类型关键字，表示函数不会返回任何值</span></span><br><span class="line">    <span class="type">int</span> ni = phi.<span class="built_in">size</span>();  <span class="comment">//  网格节点的数量</span></span><br><span class="line">    <span class="function">dvector <span class="title">a</span><span class="params">(ni)</span></span>;    <span class="comment">//  phi[i-1]的系数</span></span><br><span class="line">    <span class="function">dvector <span class="title">b</span><span class="params">(ni)</span></span>;    <span class="comment">//  phi[i]的系数</span></span><br><span class="line">    <span class="function">dvector <span class="title">c</span><span class="params">(ni)</span></span>;    <span class="comment">//  phi[i+1]的系数</span></span><br><span class="line">    <span class="function">dvector <span class="title">d</span><span class="params">(ni)</span></span>;    <span class="comment">//  等号右边项(RHS)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设定系数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;ni;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (i==<span class="number">0</span> || i==ni<span class="number">-1</span>)&#123;   <span class="comment">//  直接边界条件</span></span><br><span class="line">            b[i] = <span class="number">1</span>;   <span class="comment">//  对角线值为1</span></span><br><span class="line">            d[i] = <span class="number">0</span>;   <span class="comment">//  RHS值为： 0 V</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;  <span class="comment">// 设定标准模版</span></span><br><span class="line">            a[i] = <span class="number">1</span>/(dx*dx);   <span class="comment">// phi[i-1]系数</span></span><br><span class="line">            b[i] = <span class="number">-2</span>/(dx*dx);  <span class="comment">// phi[i]系数</span></span><br><span class="line">            c[i] = <span class="number">1</span>/(dx*dx);  <span class="comment">// phi[i+1]系数</span></span><br><span class="line">            d[i] = -rho[i]/EPS_0;   <span class="comment">// RHS值</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    c[<span class="number">0</span>] = c[<span class="number">0</span>]/b[<span class="number">0</span>];</span><br><span class="line">    d[<span class="number">0</span>] = d[<span class="number">0</span>]/b[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 向前步骤</span></span><br><span class="line">    <span class="keyword">for</span> （<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni; i++）&#123;</span><br><span class="line">        <span class="keyword">if</span> (i&lt;ni<span class="number">-1</span>)&#123;</span><br><span class="line">            c[i] = c[i]/(b[i]-a[i]*c[i<span class="number">-1</span>]);</span><br><span class="line">            d[i] = (d[i] − a[i]*d[i−<span class="number">1</span>])/(b[i] − a[i]*c[i−<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 向后代换</span></span><br><span class="line">    phi[ni<span class="number">-1</span>] = d[ni<span class="number">-1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=ni<span class="number">-2</span>; i&gt;=<span class="number">0</span>; i--)&#123;</span><br><span class="line">        phi[i] = d[i] - c[i]*phi[i+<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="jacobi-迭代">Jacobi 迭代</h4>
+<p>对于2D和3D问题，经常使用迭代求解器来求解。对于Jacboi迭代，迭代形式为(根据Jacboi迭代可轻松得出，此处不展开)：
+<span class="math display">\[\begin{equation}
+    \phi_i^{k+1}=\left[b_i-\sum_{j=0}^{nj-1}(1-\delta_{ij})a_{ij}\phi_j^k\right]/a_{ii}
+\end{equation}\]</span></p>
+<p>where 对于<span class="math inline">\(\delta_{ij}\)</span>，当<span
+class="math inline">\(i=j\)</span>时为0，反之为1。<span
+class="math inline">\(k\)</span>和<span
+class="math inline">\(k+1\)</span>分别代表当前和新的值。
+在这里，利用系数矩阵的稀疏结构也是很有意义的。
+此外，对于泊松方程，所有非边界系数都是相同的，因此有： <span
+class="math display">\[\begin{equation} \label{equ-1-51}
+    \phi_i^{k+1}=\left(\phi_{i-1}^k+\phi_{i+1}^k-b\Delta^2x\right)/2
+\end{equation}\]</span></p>
+<p>Jacobi 迭代算法实现如下： <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> k=<span class="number">0</span>; k&lt;max_it; k++)&#123;</span><br><span class="line">    <span class="comment">// 在整数节点上计算k+1的值</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">        phi_new[i] = (phi[i<span class="number">-1</span>] + phi[i+<span class="number">1</span>] - (dx*dx)*b[i])/<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 应用边界条件</span></span><br><span class="line">    phi_new[<span class="number">0</span>] = phi_left;</span><br><span class="line">    phi_new[ni<span class="number">-1</span>] = phi_right;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将新的k+1值copy down到 &#x27;k&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i&lt;ni; i++)&#123;</span><br><span class="line">        phi[i] = phi_new[i]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="gauss-seidel-方案">Gauss-Seidel 方案</h4>
+<p>Jacobi迭代需要存储当前和新的值，然后将新的值覆盖当前值。但我们是否可以直接覆盖当前值？这将给我们Gauss-Seidel方案。
+方程<span class="math inline">\(\ref{equ-1-51}\)</span>被如下方程替代：
+<span class="math display">\[\begin{equation}
+    \phi_i^{k+1}=\left(\phi_{i-1}^{k+1}+\phi_{i+1}^k-b\Delta^2x\right)/2
+\end{equation}\]</span></p>
+<p>相应的伪代码： <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 应用边界条件</span></span><br><span class="line">phi[<span class="number">0</span>] = phi_left;</span><br><span class="line">phi[ni<span class="number">-1</span>] = phi_right;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> k=<span class="number">0</span>; k&lt;max_it;k++)&#123;</span><br><span class="line">    <span class="comment">// 在整数节点计算&#x27;k+1&#x27;的值</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>;i++)&#123;</span><br><span class="line">        phi[i] = (phi[i−<span class="number">1</span>] + phi[i+<span class="number">1</span>] − (dx*dx)*b[i])/<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+Gauss-Seidel方案更简单，且不需要二次array。它通常比Jacobi收敛得更快，尽管存在Gauss
+- Seidel可能发散而Jacobi不发散的矩阵系统。</p>
+<div class="note "><p>对角优势：每个方程中对角线系数的绝对值必须大于方程中其他系数的绝对值之和。</p>
+<p>当方程组具有对角优势的时候，肯定收敛。如果不具有，也有可能收敛(充分不必要条件)。</p>
+</div>
+<h4 id="连续超松弛">连续超松弛</h4>
+<p>我们可以通过实施连续超松弛( Successive Over Relaxation，SOR
+)来进一步加快收敛速度。
+该方案利用旧的和新的近似来预测未来的解。对于任意两点y1和y2，我们可以用线性拟合定义另一点，<span
+class="math inline">\(y = y_1 + w(y_2-y1)\)</span>。 式中：<span
+class="math inline">\(w\)</span>为松弛因子。该表达式在<span
+class="math inline">\(w = 0\)</span>时取值为<span
+class="math inline">\(y_1\)</span>，在<span class="math inline">\(w =
+1\)</span>时取值为<span class="math inline">\(y_2\)</span>。当<span
+class="math inline">\(w &gt; 1\)</span>时，我们得到了超出<span
+class="math inline">\(y_2\)</span>极限的插值值。
+通过这样的方法将新的值和旧的值进行加权平均，也许在<span
+class="math inline">\(t&gt;1\)</span>时可以得到比较好的近似。
+SOR加速的GS算法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> k=<span class="number">0</span>; k&lt;max_it; k++)&#123;</span><br><span class="line">    <span class="comment">// 在整数节点计算“k+1”值</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">        <span class="type">double</span> g = (phi[i−<span class="number">1</span>] + phi[i+<span class="number">1</span>] − (dx*dx)*b[i])/<span class="number">2</span>;</span><br><span class="line">        phi[i] = phi[i]+w*(g-phi[i]); <span class="comment">// SOR</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 应用边界条件</span></span><br><span class="line">    phi[<span class="number">0</span>] = phi_left;</span><br><span class="line">    phi[ni<span class="number">-1</span>] = phi_right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最优加速度参数w的值需要通过试凑来确定，但习惯上使用1.4左右的值。过大的w会导致初始误差向错误的方向传播而出现收敛问题。利用w
+&lt;
+1被称为欠松弛，并在CFD中用于稳定可能发散的求解器。一种自适应的方法有时是首选的。</p>
+<div class="note "><p>超松弛隐含了一个假设：新值正在朝着真正解的正确方向移动。</p>
+</div>
+<h4 id="收敛性检查">收敛性检查</h4>
+<p>在迭代次数<span class="math inline">\(k\)</span>时当前的矩阵系统为：
+<span class="math display">\[\begin{equation}
+    \mathbf{A}\vec{\phi}^k=\vec{b}^k+\vec{R}^k
+\end{equation}\]</span></p>
+<p><span class="math inline">\(\vec{R}^k\)</span>是残差。</p>
+<p>通过向量范数来刻画它的大小。有几种范数，其中一个称为L2： <span
+class="math display">\[\begin{equation}
+    ||R||=\sqrt{\frac{\sum_i^n(R_i)^2}n}
+\end{equation}\]</span></p>
+<p>由于这种计算需要耗费一些宝贵的计算资源，我们一般不会在每次迭代中计算残差。我一般每隔25~50次求解器迭代就对Gauss-Seidel求解器中的残差进行评估，因为这似乎是在不太频繁地执行收敛检查与超出期望的容差运行额外的迭代之间的一个很好的妥协。完整的求解器代码如下所示。至多运行max_it次迭代。一旦范数下降到10-6以下，函数以成功代码终止。否则，如果超过求解器的最大迭代次数而没有达到期望的容忍度，我们返回错误来表示失败。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">solvePotentialGS</span><span class="params">(<span class="type">double</span> dx, dvector &amp;phi, <span class="type">const</span> dvector &amp;rho, <span class="type">int</span> max_it=<span class="number">5000</span>)</span></span>&#123;</span><br><span class="line">    <span class="type">double</span> L2;</span><br><span class="line">    <span class="type">double</span> dx2 = dx*dx;  <span class="comment">// 提前计算dx*dx</span></span><br><span class="line">    condt <span class="type">double</span> w = <span class="number">1.4</span>;</span><br><span class="line">    <span class="type">int</span> ni = phi.<span class="built_in">size</span>();    <span class="comment">// 网格节点数量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 求解电势</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> solver_it=<span class="number">0</span>; solver_it&lt;max_it; solver_it++)&#123;</span><br><span class="line">        phi[<span class="number">0</span>] = <span class="number">0</span>; <span class="comment">// 左侧直接边界条件</span></span><br><span class="line">        phi[ni<span class="number">-1</span>] = <span class="number">0</span>; <span class="comment">// 右侧直接边界条件</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Gauss Seidel方法</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">            <span class="type">double</span> g = <span class="number">0.5</span>*(phi[i<span class="number">-1</span>] + phi[i+<span class="number">1</span>] + dx2*rho[i]/EPS_0);</span><br><span class="line">            phi[i] = phi[i] + w*(g-phi[i]); <span class="comment">//SOR</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 检查收敛性</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (solver_it%<span class="number">50</span>==<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="type">double</span> sum = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// 仅检查触边界节点外的整数节点</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">                <span class="type">double</span> R = -rho[i]/EPS0 − (phi[i−<span class="number">1</span>] − <span class="number">2</span>*phi[i] + phi[i+<span class="number">1</span>])/dx2; <span class="comment">//已知值减去根据迭代值算出的值，得到残差</span></span><br><span class="line">                sum+=R*R ;</span><br><span class="line">            &#125;</span><br><span class="line">            L2 = <span class="built_in">sqrt</span>(sum/ni);  <span class="comment">// L2范数</span></span><br><span class="line">            <span class="keyword">if</span> (L2&lt;<span class="number">1e-6</span>)&#123;</span><br><span class="line">                cout&lt;&lt;<span class="string">&quot;GS solver converged after &quot;</span>&lt;&lt;solver_it&lt;&lt;<span class="string">&quot;iterations&quot;</span>&lt;&lt;endl;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;GS solver failed to converge, L2=&quot;</span>&lt;&lt;L2&lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="电场">电场</h3>
+<p>下一个步骤计算电场： <span class="math display">\[\begin{equation}
+    E=-\frac{\partial\phi}{\partial x}
+\end{equation}\]</span></p>
+<p>在节点位置<span class="math inline">\(i\)</span>处使用泰勒展开：</p>
+<p><span class="math display">\[\begin{equation}\label{1-56}
+    \begin{gathered}
+\boldsymbol{f_{i+1}} =f_i+\frac{\Delta x}1\frac{\partial f}{\partial
+x}+\frac{(\Delta x)^2}2\frac{\partial^2f}{\partial x^2}+\text{HOT} \\
+\boldsymbol{f_{i-1}} =f_i-\frac{\Delta x}1\frac{\partial f}{\partial
+x}+\frac{(\Delta x)^2}2\frac{\partial^2f}{\partial x^2}+\text{HOT}
+\end{gathered}
+\end{equation}\]</span></p>
+<p><span class="math display">\[\begin{equation}
+    \begin{aligned}f_{i+1}-f_{i-1}=2\Delta x\frac{\partial f}{\partial
+x}+\text{HOT}\end{aligned}
+\end{equation}\]</span></p>
+<p>同样地，通过一阶偏微分方程的中心差分，可得： <span
+class="math display">\[\begin{equation}
+    \frac{\partial f}{\partial
+x}\thickapprox\frac{f_{i+1}-f_{i-1}}{2\Delta x}
+\end{equation}\]</span></p>
+<p>如果忽略二阶导数，则得到向前以及向后差分： <span
+class="math display">\[\begin{equation}
+    \begin{aligned}\frac{\partial f}{\partial
+x}&amp;\approx\frac{f_{i+1}-f_i}{\Delta x}\\\\\frac{\partial f}{\partial
+x}&amp;\approx\frac{f_i-f_{i-1}}{\Delta x}\end{aligned}
+\end{equation}\]</span></p>
+<p>显然： <span class="math display">\[\begin{equation}
+    \begin{aligned}f_{i+2}=f_i+2\Delta x\frac{\partial f}{\partial
+x}+2\Delta^2x\frac{\partial^2f}{\partial x}\end{aligned}
+\end{equation}\]</span></p>
+<p>对方程<span class="math inline">\(\ref{1-56}\)</span>乘以4，则得：
+<span class="math display">\[\begin{equation}
+    \begin{aligned}\frac{\partial f}{\partial
+x}&amp;\approx\frac{-3f_i+4f_{i+1}-f_{i+2}}{2\Delta x}\end{aligned}
+\end{equation}\]</span></p>
+<p><span class="math display">\[\begin{equation}
+    \begin{aligned}\frac{\partial f}{\partial
+x}&amp;\approx\frac{f_{i-2}-4f_{i-1}+3f_i}{2\Delta x}\end{aligned}
+\end{equation}\]</span></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过差分电势计算电场</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">computeEF</span><span class="params">(<span class="type">double</span> dx, dvector &amp;ef, <span class="type">const</span> dvector &amp;phi, <span class="type">bool</span> second_order=<span class="literal">true</span>)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> ni = phi.<span class="built_in">size</span>();    <span class="comment">//网格点数</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 整数点上的中心差分</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">        ef[i] = -(phi[i+<span class="number">1</span>] - phi[i<span class="number">-1</span>])/(<span class="number">2</span>*dx);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 边界上one-sided 一阶或二阶差分</span></span><br><span class="line">    <span class="keyword">if</span> (second_order)&#123;</span><br><span class="line">        ef[<span class="number">0</span>] = (<span class="number">3</span>*phi[<span class="number">0</span>] - <span class="number">4</span>*phi[<span class="number">1</span>] + phi[<span class="number">2</span>])/(<span class="number">2</span>*dx);</span><br><span class="line">        ef[ni<span class="number">-1</span>] = (-phi[ni<span class="number">-3</span>] + <span class="number">4</span>*phi[ni<span class="number">-2</span>] - <span class="number">3</span>*phi[ni<span class="number">-1</span>])/(<span class="number">2</span>*dx);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123; <span class="comment">// 一阶</span></span><br><span class="line">        ef[<span class="number">0</span>] = -(phi[<span class="number">1</span>] - phi[<span class="number">0</span>])/(dx);</span><br><span class="line">        ef[ni<span class="number">-1</span>] = -(phi[ni<span class="number">-1</span>] - phi[ni<span class="number">-2</span>])/(dx);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="粒子运动">粒子运动</h3>
+<p>既然我们已经计算出了电势和电场，我们就可以引入试验粒子。我们通过质量、电荷、位置以及速度来定义粒子。
+粒子运动由运动方程<span
+class="math inline">\(\ref{1.1}\)</span>给出，力由<span
+class="math inline">\(F_x=qE_x\)</span>确定。注意，此处不含磁场。
+我们使用有限差分，注意时间只能向前流动，因此不能使用中心差分。 <span
+class="math display">\[\begin{equation}
+    \begin{aligned}&amp;x^{k+1}=x^k+v^k\Delta
+t\\&amp;v^{k+1}=v^k+(q/m)E^k\Delta t\end{aligned}
+\end{equation}\]</span>
+这个方案被称为前向欧拉方法。这是一种显式方法，因为在时间<span
+class="math inline">\(k+1\)</span>的新值仅依赖于时间k的数据。
+因此，可以为每个粒子定义一个方程式，明确提供新的位置。
+这与隐式方法形成对比，在隐式方法中，<span
+class="math inline">\(k+1\)</span>处的值依赖于其他也是<span
+class="math inline">\(k+1\)</span>处的值。
+通常，隐式方案会导致线性系统出现，需要矩阵求解。 在上述公式中，<span
+class="math inline">\(E_k =
+E(x^k)\)</span>表示在第k时间步粒子位置的电场采样。
+我们很快会了解如何将网格数据插值到粒子。现在，假设电场是恒定的。通过以下代码展示积分过程：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 载入粒子</span></span><br><span class="line">    <span class="type">double</span> m = ME; <span class="comment">// 粒子质量</span></span><br><span class="line">    <span class="type">double</span> q = -QE; <span class="comment">// 粒子电荷</span></span><br><span class="line">    <span class="type">double</span> x = <span class="number">0</span>; <span class="comment">// 初始位置</span></span><br><span class="line">    <span class="type">double</span> v = <span class="number">0</span>; <span class="comment">// 初始速度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模拟参数</span></span><br><span class="line">    <span class="type">double</span> dt = <span class="number">1e-9</span>; <span class="comment">// 时间步长</span></span><br><span class="line">    <span class="type">double</span> E = <span class="number">-100</span>; <span class="comment">// 电场强度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打开粒子轨迹文件</span></span><br><span class="line">    <span class="function">ofstream <span class="title">out</span><span class="params">(<span class="string">&quot;trace.csv&quot;</span>)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!out)&#123;</span><br><span class="line">        cerr &lt;&lt; <span class="string">&quot;无法打开轨迹文件&quot;</span> &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    out &lt;&lt; <span class="string">&quot;t, x, v\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 粒子循环</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> it=<span class="number">0</span>; it&lt;<span class="number">10</span>; it++)&#123;</span><br><span class="line">        <span class="comment">// 写入轨迹文件</span></span><br><span class="line">        out&lt;&lt;it*dt&lt;&lt;<span class="string">&quot;, &quot;</span>&lt;&lt;x&lt;&lt;<span class="string">&quot;, &quot;</span>&lt;&lt;v&lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新速度和位置</span></span><br><span class="line">        x+= v*dt;</span><br><span class="line">        v+= (q/m)*E*dt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">//moraml exit</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="向前向后欧拉方法">向前/向后欧拉方法</h4>
+<p>原书中讨论了这两种方法，总的来说都有较大的误差。</p>
+<h4 id="蛙跳方法">蛙跳方法</h4>
+<p>在积分过程中，<span class="math inline">\(v^k\)</span>和<span
+class="math inline">\(v^{k+1}\)</span>是可用的，我们可以利用它们的平均值。
+因此我们有： <span class="math display">\[\begin{equation}
+    x^{k+1}=x^k+\left(\frac{v^k+v^{k+1}}2\right)\Delta t
+\end{equation}\]</span> 该方案可以产生更精确的结果。利用<span
+class="math inline">\(v^{k+1} = v^{k} + \Delta
+t(q/m)E\)</span>，我们有： <span class="math display">\[\begin{equation}
+    \frac{v^k+v^{k+1}}2=v^k+\frac{\Delta t}2\frac qmE\equiv v^{k+0.5}
+\end{equation}\]</span></p>
+<p>位置需要在半个步时来进行速度积分。由于这些半步时刻仅需要速度，因此让初始粒子速度在<span
+class="math inline">\(k=-0.5\)</span>时定义是合理的。</p>
+<p>这种方法避免了显式执行平均的需要。虽然这看起来可能是个微不足道的优化，考虑到在典型的PIC模拟中有数百万的粒子以及数十万的时间步长，消除任何低效对我们都是有利的。
+通过这种方案，我们知道了在时间k =
+−0.5、0.5、1.5等时刻的速度。同时，我们也知道了在时间k =
+0、1、2等时刻的粒子位置。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 载入粒子</span></span><br><span class="line">    <span class="type">double</span> m = ME; <span class="comment">// 粒子质量</span></span><br><span class="line">    <span class="type">double</span> q = -QE; <span class="comment">// 粒子电荷</span></span><br><span class="line">    <span class="type">double</span> x = <span class="number">0</span>; <span class="comment">// 初始位置</span></span><br><span class="line">    <span class="type">double</span> v = <span class="number">0</span>; <span class="comment">// 初始速度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模拟参数</span></span><br><span class="line">    <span class="type">double</span> dt = <span class="number">1e-9</span>; <span class="comment">// 时间步长</span></span><br><span class="line">    <span class="type">double</span> E = <span class="number">-100</span>; <span class="comment">// 电场强度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打开粒子轨迹文件</span></span><br><span class="line">    <span class="function">ofstream <span class="title">out</span><span class="params">(<span class="string">&quot;trace.csv&quot;</span>)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!out)&#123;</span><br><span class="line">        cerr &lt;&lt; <span class="string">&quot;无法打开轨迹文件&quot;</span> &lt;&lt; endl;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    out &lt;&lt; <span class="string">&quot;t, x, v\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 速度回滚</span></span><br><span class="line">    v -= <span class="number">0.5</span>*(q/m)*E*dt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 粒子循环</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> it=<span class="number">0</span>; it&lt;<span class="number">10</span>; it++)&#123;</span><br><span class="line">        <span class="comment">// 写入轨迹文件</span></span><br><span class="line">        out&lt;&lt;it*dt&lt;&lt;<span class="string">&quot;, &quot;</span>&lt;&lt;x&lt;&lt;<span class="string">&quot;, &quot;</span>&lt;&lt;v&lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新速度和位置</span></span><br><span class="line">        v+= (q/m)*E*dt;</span><br><span class="line">        x+= v*dt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// moraml exit</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="note "><p>由于回退时间步，实际上是让电场回退到两个格点中间，因此需要差值计算。</p>
+</div>
+<h4 id="替代方法">替代方法</h4>
+<p>另一种替代方法是四阶精确的龙格-库塔方法(RK4)。对于一个一般的偏微分方程来说:
+<span class="math display">\[\begin{equation}
+    \begin{aligned}\frac{\partial f}{\partial t}=g(t,f)\end{aligned}
+\end{equation}\]</span></p>
+<p>未来时间步的值由下式确定： <span
+class="math display">\[\begin{equation}
+    \begin{aligned}f^{k+1}&amp;=f^k+\frac16\left(k_1+2k_2+2k_3+k_4\right)\end{aligned}
+\end{equation}\]</span> 其中， <span
+class="math display">\[\begin{equation}
+    \begin{aligned}
+&amp;\boldsymbol{k_1} \Large=\Delta tg\left(t^k,y^k\right)  \\
+&amp;\boldsymbol{k}_{2} =\Delta tg\left(t^k+\frac{\Delta
+t}2,y^k+\frac{k_1}2\right)  \\
+&amp;{\boldsymbol{k}_3} =\Delta tg\left(t^k+\frac{\Delta
+t}2,y^k+\frac{k_2}2\right)  \\
+&amp;{\boldsymbol{k}_4} =\Delta tg\left(t^k+\Delta t,y^k+k_3\right)
+\end{aligned}
+\end{equation}\]</span></p>
+<p>但是对于等离子体模拟而言，PK4是不常用的，因为它的计算成本很高。具体分析见原书。</p>
+<h3 id="插值">插值</h3>
+<p>上文，我们在格点中计算电场。但对处于格点中间的粒子而言，如果直接使用会导致电场非常不连续。
+这种不连续性可能会引发数值不稳定性，导致非物理结果。
+作者采用了线性插值的方式，使得电场变得连续。</p>
+<p><span class="math display">\[\begin{equation}
+    \begin{aligned}f=f_i+d_i(f_{i+1}-f_i)\end{aligned}
+\end{equation}\]</span> 上式中，<span
+class="math inline">\(f_i\)</span>是格点<span
+class="math inline">\(i\)</span>上的电场值，<span
+class="math inline">\(f_{i+1}\)</span>是格点<span
+class="math inline">\(i+1\)</span>上的电场值，<span
+class="math inline">\(d_i\)</span>是插值系数。</p>
+<p>可以重新写为： <span
+class="math display">\[\begin{equation}\label{1.79}
+    \begin{aligned}f=(1-d_i)f_i+(d_i)f_{i+1}\end{aligned}
+\end{equation}\]</span></p>
+<img src="/images/Lubos/latexImage_0973cb5041f3469f5a9911e5f67c1b0d.png" class="" width="400" title="Figure 1.10: Visualization of the one-dimensional linear gather operation.">
+<p>上述表达式给出的操作被称为gather，因为它将多个基于网格的值聚集到特定位置以evaluate一个量。
+相反的过程被称为scatter，它用于将基于粒子的数据存放回网格。我们在下一章中使用scatter操作来计算粒子密度。
+在方程<span class="math inline">\(\ref{1.79}\)</span>中，<span
+class="math inline">\((1−di)\)</span>和<span
+class="math inline">\((di)\)</span>项被称为基函数，或者称为形状因子。它们在图1.10中以两条虚线表示。在粒子位置<span
+class="math inline">\(x_p\)</span>处，它们的幅值用于缩放两个周围节点<span
+class="math inline">\(f_i\)</span>和<span
+class="math inline">\(f_{i+1}\)</span>的值。</p>
+<p>聚集和分散算法都需要知道包含粒子的单元。我们还需要知道粒子在单元内的相对位置。
+对于均匀网格，这种计算很简单。通过反转节点位置的映射，我们得到<span
+class="math inline">\(l_i = (x−x_0)/\Delta x\)</span>。这里的<span
+class="math inline">\(l_i\)</span>是逻辑坐标。
+它只是我们之前用于计算节点位置的整数索引<span
+class="math inline">\(i\)</span>的浮点数对应物。 <span
+class="math inline">\(l_i\)</span>的整数部分是节点索引，而小数部分是与下一个节点的分数距离<span
+class="math inline">\(d_i\)</span>。因此，我们定义一个辅助函数:
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">XtoL</span><span class="params">(<span class="type">double</span> x, <span class="type">double</span> dx, <span class="type">double</span> x0=<span class="number">0</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (x-x0)/dx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+以evaluate逻辑坐标。通过如下代码获得节点索引以及分数部分<span
+class="math inline">\(d_i\)</span>： <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">double</span> <span class="title">gather</span><span class="params">(<span class="type">double</span> li, <span class="type">const</span> dvector &amp;field)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="built_in">int</span>(li);</span><br><span class="line">    <span class="type">double</span> di = li-i;</span><br><span class="line">    <span class="keyword">return</span> field[i]*(<span class="number">1</span>-di)+field[i+<span class="number">1</span>]*di;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">我们使用如下函数：</span><br><span class="line">```<span class="function">cpp</span></span><br><span class="line"><span class="function">dvector <span class="title">ef</span><span class="params">(ni)</span></span>; <span class="comment">// 基于节点的电场</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> ts=<span class="number">0</span>; ts&lt;<span class="number">2000</span>; ts++)&#123; <span class="comment">// 2000个时间步长</span></span><br><span class="line">    <span class="comment">// 粒子位置的电场</span></span><br><span class="line">    <span class="type">double</span> li = <span class="built_in">XtoL</span>(x, dx);</span><br><span class="line">    <span class="type">double</span> ef_p = <span class="built_in">gather</span>(li, ef);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 速度和位置积分</span></span><br><span class="line">    v += (q/m)*ef_p*dt;</span><br><span class="line">    x += v*dt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="诊断">诊断</h3>
+<p>我们现在已经实现了完成代码所需的所有部分。但是，就像任何计算机模拟一样，验证结果是否具有物理意义是很重要的。
+粒子振荡源于能量的守恒。因此，我们应该检查能量是否确实得到了守恒。
+在时刻<span
+class="math inline">\(k\)</span>，一个粒子的总能量由其势能和动能之和给出:
+<span class="math display">\[\begin{equation}
+    \frac12mv^2+q(\phi-\phi_{max})=C
+\end{equation}\]</span> 其中<span
+class="math inline">\(C\)</span>是常数。实现这个诊断检查要求在同一物理时间评估速度与位置。
+通过我们的leapfrog，这两个参数实际上有半个时间步长的offset，速度落后于位置。
+一种可能性是通过追踪旧位置来使两个参数处于相同的物理时间，在<span
+class="math inline">\(x^{k-0.5}=(x^k+x^{k-1})/2\)</span>。
+将两种能量从焦耳转换为电子伏特，方法是将它们除以基本电荷。
+通过一下代码实现： <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> phi_p = <span class="built_in">gather</span>(<span class="built_in">XtoL</span>((x+x_old)/<span class="number">2</span>, dx) phi); <span class="comment">// phi(x(k-0.5))</span></span><br><span class="line"><span class="type">double</span> ke = <span class="number">0.5</span>*m*v*v/QE; <span class="comment">// KE in eV</span></span><br><span class="line"><span class="type">double</span> pe = q*(phi_p-phi_max)/QE; <span class="comment">// PE in eV</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="全部代码">全部代码</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;math.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// constants</span></span><br><span class="line"><span class="keyword">namespace</span> Const&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> QE = <span class="number">1.602176634e-19</span>; <span class="comment">// C, 单位电荷</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> ME = <span class="number">9.10938356e-31</span>; <span class="comment">// kg, 单位质量   </span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> EPS0 = <span class="number">8.854187817e-12</span>; <span class="comment">// F/m, 真空电界常数</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> Const;  </span><br><span class="line"><span class="keyword">using</span> dvector = vector&lt;<span class="type">double</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  函数 prototypes (声明？)</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">outputCSV</span><span class="params">(<span class="type">double</span> x0, <span class="type">double</span> dx, <span class="type">const</span> dvector &amp;phi, <span class="type">const</span> dvector &amp;rho, <span class="type">const</span> dvector &amp;ef)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solvePotentialDirect</span><span class="params">(<span class="type">double</span> dx, dvector &amp;phi, <span class="type">const</span> dvector &amp;rho)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">solvePotentialGS</span><span class="params">(<span class="type">double</span> dx, dvector &amp;phi, <span class="type">const</span> dvector &amp;rho, <span class="type">int</span> max_it=<span class="number">5000</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">computeEfield</span><span class="params">(<span class="type">double</span> dx, dvector &amp;ef, <span class="type">const</span> dvector &amp;phi, <span class="type">bool</span> second_order=<span class="literal">true</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">gather</span><span class="params">(<span class="type">double</span> li, <span class="type">const</span> dvector &amp;field)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将物理坐标x转化为逻辑坐标l</span></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">XtoL</span><span class="params">(<span class="type">double</span> x, <span class="type">double</span> dx, <span class="type">double</span> x0 = <span class="number">0</span>)</span></span>&#123;<span class="keyword">return</span> (x-x0)/dx;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> ni = <span class="number">21</span>;          <span class="comment">// 节点数量</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> x0 = <span class="number">0</span>;        <span class="comment">// 原点</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> xd = <span class="number">0.1</span>;          <span class="comment">// 长度</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> dx = (xd-x0)/(ni<span class="number">-1</span>); <span class="comment">// 网格间距</span></span><br><span class="line"></span><br><span class="line">    <span class="function">dvector <span class="title">rho</span><span class="params">(ni, QE*<span class="number">1e12</span>)</span></span>;      <span class="comment">// 电荷密度</span></span><br><span class="line">    <span class="function">dvector <span class="title">ef</span><span class="params">(ni)</span></span>;     <span class="comment">// 电场</span></span><br><span class="line">    <span class="function">dvector <span class="title">phi</span><span class="params">(ni)</span></span>;     <span class="comment">// 电势</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 求解电势</span></span><br><span class="line">    <span class="built_in">solvePotentialGS</span>(dx, phi, rho);</span><br><span class="line">    <span class="comment">// solvePotentialDirect(dx, phi, rho);  // 替换求解器</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算电场</span></span><br><span class="line">    <span class="built_in">computeEF</span>(dx, ef, phi, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生成测试电子</span></span><br><span class="line">    <span class="type">double</span> m = ME;</span><br><span class="line">    <span class="type">double</span> q = -QE;</span><br><span class="line">    <span class="type">double</span> x = <span class="number">4</span>*dx;    <span class="comment">// four cells from left edge</span></span><br><span class="line">    <span class="type">double</span> v = <span class="number">0</span>;   <span class="comment">//  静止</span></span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> dt = <span class="number">1e-10</span>;  <span class="comment">//  时间步长</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 速度rewind</span></span><br><span class="line">    <span class="type">double</span> li = <span class="built_in">XtoL</span>(x, dx);</span><br><span class="line">    <span class="type">double</span> ef_p = <span class="built_in">gather</span>(li, ef);</span><br><span class="line">    v -= <span class="number">0.5</span>*(q/m)*ef_p*dt;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为PE计算保存初始电场</span></span><br><span class="line">    <span class="type">double</span> phi_max = phi[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (phi[i] &gt; phi_max) </span><br><span class="line">            phi_max = phi[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打开粒子追踪的文件</span></span><br><span class="line">    <span class="function">ofstream <span class="title">outfile</span><span class="params">(<span class="string">&quot;trace.csv&quot;</span>)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!out) &#123;cerr&lt;&lt;<span class="string">&quot;未打开trace文件&quot;</span>&lt;&lt;endl; <span class="keyword">return</span> <span class="number">-1</span>;&#125;</span><br><span class="line">    out&lt;&lt;<span class="string">&quot; time, x, v, KE, PE\n&quot;</span>&lt;&lt;endl;</span><br><span class="line">    <span class="type">double</span> x_old = x;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 粒子循环</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> ts=<span class="number">1</span>; ts&lt;<span class="number">4000</span>; ts++)&#123;</span><br><span class="line">        <span class="comment">// 粒子位置处的网格数据</span></span><br><span class="line">        <span class="type">double</span> li =<span class="built_in">XtoL</span>(x, dx);</span><br><span class="line">        <span class="type">double</span> ef_p = <span class="built_in">gather</span>(li, ef);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 速度和位置积分</span></span><br><span class="line">        x_old = x;</span><br><span class="line">        v += (q/m)*ef_p*dt;</span><br><span class="line">        x += v*dt;</span><br><span class="line"></span><br><span class="line">        <span class="type">double</span> phi_p = <span class="built_in">gather</span>(<span class="built_in">XtoL</span>(<span class="number">0.5</span>*(x+x_old), dx), phi);</span><br><span class="line">        <span class="comment">// phi (x(k-0.5))</span></span><br><span class="line">        <span class="type">double</span> ke = <span class="number">0.5</span>*m*v*v/QE;       <span class="comment">// KE in eV</span></span><br><span class="line">        <span class="type">double</span> pe = q*(phi_p-phi_max)/QE;  <span class="comment">// PE in eV</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 写入到文件中</span></span><br><span class="line">        out&lt;&lt;ts*dt&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;x&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;v&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;ke&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;pe&lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (ts==<span class="number">1</span> || ts%<span class="number">1000</span>==<span class="number">0</span>)&#123;       <span class="comment">// 每1000时间步向屏幕输出</span></span><br><span class="line">            cout&lt;&lt;<span class="string">&quot;ts: &quot;</span>&lt;&lt;ts&lt;&lt;<span class="string">&quot;, x: &quot;</span>&lt;&lt;x&lt;&lt;<span class="string">&quot;, v: &quot;</span>&lt;&lt;v&lt;&lt;<span class="string">&quot;, KE: &quot;</span>&lt;&lt;ke&lt;&lt;<span class="string">&quot;, PE: &quot;</span>&lt;&lt;pe&lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将结果输出到CSV文件</span></span><br><span class="line">        <span class="built_in">outputCSV</span>(ni, dx, phi, rho, ef);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;   <span class="comment">// normal exit</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将给定的场输出到CSV文件中，如果成功则返回true</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">outputCSV</span><span class="params">(<span class="type">double</span> x0, <span class="type">double</span> dx, <span class="type">const</span> dvector &amp;phi, <span class="type">const</span> dvector &amp;rho, <span class="type">const</span> dvector &amp;ef)</span></span>&#123;</span><br><span class="line">    <span class="function">ofstream <span class="title">out</span><span class="params">(<span class="string">&quot;results.csv&quot;</span>)</span></span>;    <span class="comment">//打开文件以写入</span></span><br><span class="line">    <span class="keyword">if</span> (!out) &#123;</span><br><span class="line">        cerr&lt;&lt;<span class="string">&quot;未打开results文件&quot;</span>&lt;&lt;endl; </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    out&lt;&lt;<span class="string">&quot;x,phi,rho,ef&quot;</span>&lt;&lt;endl;      <span class="comment">// write header</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i=<span class="number">0</span>; i&lt;phi.<span class="built_in">size</span>(); i++)&#123;</span><br><span class="line">        out&lt;&lt;x0+i*dx;</span><br><span class="line">        out&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;phi[i]&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;rho[i]&lt;&lt;<span class="string">&quot;,&quot;</span>&lt;&lt;ef[i];  <span class="comment">// write values</span></span><br><span class="line">        out&lt;&lt;<span class="string">&quot;\n&quot;</span>;      <span class="comment">// 新line， not using endl to avoid buffer flush</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;    <span class="comment">// 文件在此处自动关闭</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用Thomas 算法求解泊松方程with Dirichlet boundaries</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solvePotentialDirect</span><span class="params">(<span class="type">double</span> dx, dvector &amp;phi, <span class="type">const</span> dvector &amp;rho)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> ni = phi.<span class="built_in">size</span>();    <span class="comment">//  mesh节点的数量</span></span><br><span class="line">    <span class="function">dvector <span class="title">a</span><span class="params">(ni)</span></span>;  <span class="comment">// 为矩阵系数分配内存</span></span><br><span class="line">    <span class="function">dvector <span class="title">b</span><span class="params">(ni)</span></span>;</span><br><span class="line">    <span class="function">dvector <span class="title">c</span><span class="params">(ni)</span></span>;</span><br><span class="line">    <span class="function">dvector <span class="title">d</span><span class="params">(ni)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设定系数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;ni; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (i==<span class="number">0</span> || i==ni<span class="number">-1</span>)&#123;   <span class="comment">// Dirichlet 边界</span></span><br><span class="line">            b[i] = <span class="number">1</span>;   <span class="comment">// 斜对角为1</span></span><br><span class="line">            d[i] = <span class="number">0</span>;   <span class="comment">// RHS， 0 V</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            a[i] = <span class="number">1</span>/(dx*dx);</span><br><span class="line">            b[i] = <span class="number">-2</span>/(dx*dx);</span><br><span class="line">            c[i] = <span class="number">1</span>/(dx*dx);</span><br><span class="line">            d[i] = -rho[i]/EPS_0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    c[<span class="number">0</span>] = c[<span class="number">0</span>]/b[<span class="number">0</span>];</span><br><span class="line">    d[<span class="number">0</span>] = d[<span class="number">0</span>]/b[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 向前步骤</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (i&lt;ni<span class="number">-1</span>)</span><br><span class="line">            c[i] = c[i]/(b[i]-a[i]*c[i<span class="number">-1</span>]);</span><br><span class="line">        d[i] = (d[i] - a[i]*d[i<span class="number">-1</span>])/(b[i] - a[i]*c[i - <span class="number">1</span>]);    </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 回代</span></span><br><span class="line">    phi[ni - <span class="number">1</span>] = d[ni - <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=ni<span class="number">-2</span>; i&gt;=<span class="number">0</span>; i--)</span><br><span class="line">        phi[i] = d[i] - c[i]*phi[i+<span class="number">1</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用Gauss seidel方法求解势函数</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">solvePotentialGS</span><span class="params">(<span class="type">double</span> dx, dvector &amp;phi, <span class="type">const</span> dvector &amp;rho, <span class="type">int</span> max_it)</span></span>&#123;</span><br><span class="line">    <span class="type">double</span> L2;</span><br><span class="line">    <span class="type">double</span> dx2 = dx*dx;  <span class="comment">// 预计算 dx*dx</span></span><br><span class="line">    <span class="type">const</span> <span class="type">double</span> w = <span class="number">1.4</span>;</span><br><span class="line">    <span class="type">int</span> ni = phi.<span class="built_in">size</span>();    <span class="comment">// mesh nodes 的数量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 求解势</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> solver_it = <span class="number">0</span>; solver_it &lt; max_it; solver_it++)&#123;</span><br><span class="line">        phi[<span class="number">0</span>] = <span class="number">0</span>;   <span class="comment">// Dirichlet 边界 on left</span></span><br><span class="line">        phi[ni<span class="number">-1</span>] = <span class="number">0</span>; <span class="comment">// Dirichlet 边界 on right</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Gauss Seidel 方法</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">            <span class="type">double</span> g = <span class="number">0.5</span>*(phi[i<span class="number">-1</span>]+phi[i+<span class="number">1</span>]+dx2*rho[i]/EPS_0);</span><br><span class="line">            phi[i] = phi[i] + w*(g-phi[i]); <span class="comment">// SOR</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 收敛性检查</span></span><br><span class="line">        <span class="keyword">if</span> (solver_it%<span class="number">50</span> == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="type">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 内部节点，自动满足Dirichlet boundaries</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">                <span class="type">double</span> R = -rho[i]/EPS_0 - (phi[i<span class="number">-1</span>] - <span class="number">2</span>*phi[i] + phi[i+<span class="number">1</span>])/dx2;</span><br><span class="line">                sum += R*R;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            L2 = <span class="built_in">sqrt</span>(sum/(ni<span class="number">-2</span>));</span><br><span class="line">            <span class="keyword">if</span> (L2&lt;<span class="number">1e-6</span>)&#123;</span><br><span class="line">                cout&lt;&lt;<span class="string">&quot;Gauss-Seidel converged after &quot;</span>&lt;&lt;solver_it&lt;&lt;<span class="string">&quot; iterations.&quot;</span>&lt;&lt;endl;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>；</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;Gauss-Seidel failed to converge, L2 = &quot;</span>&lt;&lt;L2&lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过差分电势计算电场</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">calculateEF</span><span class="params">(<span class="type">double</span> dx, dvector &amp;ef, <span class="type">const</span> dvector &amp;phi, <span class="type">bool</span> second_order)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> ni = phi.<span class="built_in">size</span>();    <span class="comment">//网格节点数</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 整数节点的中心差分</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>; i&lt;ni<span class="number">-1</span>; i++)&#123;</span><br><span class="line">        ef[i] = -(phi[i+<span class="number">1</span>] - phi[i<span class="number">-1</span>])/(<span class="number">2</span>*dx);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 边界条件</span></span><br><span class="line">    <span class="keyword">if</span> (second_order)&#123;</span><br><span class="line">        ef[<span class="number">0</span>] = (<span class="number">3</span>*phi[<span class="number">0</span>] - <span class="number">4</span>*phi[<span class="number">1</span>] + phi[<span class="number">2</span>])/(<span class="number">2</span>*dx);</span><br><span class="line">        ef[ni<span class="number">-1</span>] = (-phi[ni<span class="number">-3</span>] + <span class="number">4</span>*phi[ni<span class="number">-2</span>] - <span class="number">3</span>*phi[ni<span class="number">-1</span>])/(<span class="number">2</span>*dx);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123; <span class="comment">// 一阶</span></span><br><span class="line">        ef[<span class="number">0</span>] = (phi[<span class="number">0</span>] - phi[<span class="number">1</span>])/dx;</span><br><span class="line">        ef[ni<span class="number">-1</span>] = (phi[ni<span class="number">-2</span>] - phi[ni<span class="number">-1</span>])/dx;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用线性插值在li处得到f</span></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">gather</span><span class="params">(<span class="type">double</span> li, <span class="type">const</span> dvector &amp;f)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> i = (<span class="type">int</span>)li;</span><br><span class="line">    <span class="type">double</span> di = li-i;</span><br><span class="line">    <span class="keyword">return</span> f[i]*(<span class="number">1</span>-di) + f[i+<span class="number">1</span>]*di;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="python实现numba加速">python实现(numba加速)</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.constants <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># 该模块包含了所需的真空介电常数: epsilon_0、电子电荷: e、电子质量m_e: 9.10938215e-31;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将给定的场输出到CSV文件中，如果成功则返回true</span></span><br><span class="line"><span class="comment"># 不能在nopython=True下使用Numba来加速涉及到文件IO（输入/输出）的代码块</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">outputCSV</span>(<span class="params">x0, dx, phi, rho,  ef</span>):</span><br><span class="line">    <span class="comment"># 打开results.csv，如果不存在该文件则报错</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;/path/to/results.csv&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> csvfile:</span><br><span class="line">            <span class="comment"># 创建一个csv写入器</span></span><br><span class="line">            writer = csv.writer(csvfile)</span><br><span class="line">            <span class="comment"># 写入表头</span></span><br><span class="line">            writer.writerow([<span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;phi&#x27;</span>, <span class="string">&#x27;rho&#x27;</span>, <span class="string">&#x27;ef&#x27;</span>])</span><br><span class="line">            <span class="comment"># 写入数据</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(phi)):</span><br><span class="line">                <span class="comment"># print(3)</span></span><br><span class="line">                writer.writerow([x0+i*dx, phi[i], rho[i], ef[i]])  </span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span>  </span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Error: Can&#x27;t open results.csv，该文件不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">outputCSV_trace</span>(<span class="params">time, x, v, KE, PE</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;/path/to/trace.csv&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, newline=<span class="string">&#x27;&#x27;</span>) <span class="keyword">as</span> csvfile:</span><br><span class="line">            <span class="comment"># 创建一个csv写入器</span></span><br><span class="line">            writer = csv.writer(csvfile)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 写入</span></span><br><span class="line">            writer.writerow([time, x, v, KE, PE])</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span>  </span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Error: Can&#x27;t open trace.csv，该文件不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span>    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用Thomas 算法求解泊松方程with Dirichlet boundaries</span></span><br><span class="line"><span class="meta">@jit(<span class="params">nopython=<span class="literal">True</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solvePotentialDirect</span>(<span class="params">dx, phi, rho</span>):</span><br><span class="line">    ni = <span class="built_in">len</span>(phi)   <span class="comment">#网格节点的数量</span></span><br><span class="line">    a = np.zeros(ni)    <span class="comment">#为矩阵系数分配内存</span></span><br><span class="line">    b = np.zeros(ni)</span><br><span class="line">    c = np.zeros(ni)</span><br><span class="line">    d = np.zeros(ni)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设定系数</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, ni):</span><br><span class="line">        <span class="keyword">if</span> i==<span class="number">0</span> <span class="keyword">or</span> i==ni-<span class="number">1</span>: <span class="comment"># Dirichlet 边界</span></span><br><span class="line">            b[i] = <span class="number">1</span>    <span class="comment"># 斜对角为1</span></span><br><span class="line">            d[i] = <span class="number">0</span>    <span class="comment"># RHS， 0 V</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            a[i] = <span class="number">1</span> / (dx * dx)</span><br><span class="line">            b[i] = -<span class="number">2</span> / (dx * dx)</span><br><span class="line">            c[i] = <span class="number">1</span> / (dx * dx)</span><br><span class="line">            d[i] = -rho[i] / EPS_0</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 初始化</span></span><br><span class="line">    c[<span class="number">0</span>] = c[<span class="number">0</span>] / b[<span class="number">0</span>]</span><br><span class="line">    d[<span class="number">0</span>] = d[<span class="number">0</span>] / b[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 向前步骤</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, ni):</span><br><span class="line">        <span class="keyword">if</span> i &lt; ni - <span class="number">1</span>:</span><br><span class="line">            c[i] = c[i] / (b[i] - a[i] * c[i - <span class="number">1</span>])</span><br><span class="line">        d[i] = (d[i] - a[i] * d[i - <span class="number">1</span>]) / (b[i] - a[i] * c[i - <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 回代</span></span><br><span class="line">    phi[ni - <span class="number">1</span>] = d[ni - <span class="number">1</span>]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(ni - <span class="number">2</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">        phi[i] = d[i] - c[i] * phi[i + <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用Gauss Seidel方法求解势函数</span></span><br><span class="line"><span class="meta">@jit(<span class="params">nopython=<span class="literal">True</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solvePotentialGS</span>(<span class="params">dx, phi, rho, max_it</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    dx: 网格间距，类型：浮点</span></span><br><span class="line"><span class="string">    phi: 电势，类型：数组</span></span><br><span class="line"><span class="string">    rho: 电荷密度，类型：数组</span></span><br><span class="line"><span class="string">    max_it: 最大迭代次数，类型：整数</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    L2 = <span class="number">0</span></span><br><span class="line">    dx2 = dx * dx</span><br><span class="line">    w = <span class="number">1.4</span></span><br><span class="line">    ni = <span class="built_in">len</span>(phi)  <span class="comment"># mesh nodes 的数量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 求解势</span></span><br><span class="line">    <span class="keyword">for</span> solver_it <span class="keyword">in</span> <span class="built_in">range</span>(max_it):</span><br><span class="line">        phi[<span class="number">0</span>] = <span class="number">0</span>  <span class="comment"># Dirichlet 边界 on left</span></span><br><span class="line">        phi[ni - <span class="number">1</span>] = <span class="number">0</span>  <span class="comment"># Dirichlet 边界 on right</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Gauss Seidel 方法</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, ni - <span class="number">1</span>):</span><br><span class="line">            g = <span class="number">0.5</span> * (phi[i - <span class="number">1</span>] + phi[i + <span class="number">1</span>] + dx2 * rho[i] / EPS_0)</span><br><span class="line">            phi[i] = phi[i] + w * (g - phi[i])  <span class="comment"># SOR</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 收敛性检查</span></span><br><span class="line">        <span class="keyword">if</span> solver_it % <span class="number">50</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">sum</span> = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 内部节点，自动满足Dirichlet boundaries</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, ni - <span class="number">1</span>):</span><br><span class="line">                R = -rho[i] / EPS_0 - (phi[i - <span class="number">1</span>] - <span class="number">2</span> * phi[i] + phi[i + <span class="number">1</span>]) / dx2</span><br><span class="line">                <span class="built_in">sum</span> += R * R</span><br><span class="line"></span><br><span class="line">            L2 = np.sqrt(<span class="built_in">sum</span> / (ni - <span class="number">2</span>))</span><br><span class="line">            <span class="keyword">if</span> L2 &lt; <span class="number">1e-6</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;Gauss-Seidel converged after &quot;</span> + <span class="built_in">str</span>(solver_it) + <span class="string">&quot; iterations.&quot;</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Gauss-Seidel failed to converge, L2 = &quot;</span> + <span class="built_in">str</span>(L2))</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过差分电势计算电场</span></span><br><span class="line"><span class="meta">@jit(<span class="params">nopython=<span class="literal">True</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">calculateEF</span>(<span class="params">dx, ef, phi, second_order</span>):</span><br><span class="line">    ni = <span class="built_in">len</span>(phi)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, ni-<span class="number">1</span>):</span><br><span class="line">        ef[i] = -(phi[i+<span class="number">1</span>] - phi[i-<span class="number">1</span>])/(<span class="number">2</span>*dx)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> second_order:</span><br><span class="line">        ef[<span class="number">0</span>] = (<span class="number">3</span>*phi[<span class="number">0</span>] - <span class="number">4</span>*phi[<span class="number">1</span>] + phi[<span class="number">2</span>])/(<span class="number">2</span>*dx)</span><br><span class="line">        ef[ni-<span class="number">1</span>] = (-phi[ni-<span class="number">3</span>] + <span class="number">4</span>*phi[ni-<span class="number">2</span>] - <span class="number">3</span>*phi[ni-<span class="number">1</span>])/(<span class="number">2</span>*dx)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        ef[<span class="number">0</span>] = (phi[<span class="number">0</span>] - phi[<span class="number">1</span>])/dx</span><br><span class="line">        ef[ni-<span class="number">1</span>] = (phi[ni-<span class="number">2</span>] - phi[ni-<span class="number">1</span>])/dx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用线性插值在li处得到f</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gather</span>(<span class="params">li, f</span>):</span><br><span class="line">    i = <span class="built_in">int</span>(li)</span><br><span class="line">    di = li-i</span><br><span class="line">    <span class="keyword">return</span> f[i]*(<span class="number">1</span>-di) + f[i+<span class="number">1</span>]*di</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将物理坐标x转化为逻辑坐标</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">X2L</span>(<span class="params">x, dx, x0=<span class="number">0</span></span>):</span><br><span class="line">    <span class="keyword">return</span> (x-x0)/dx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 物理量</span></span><br><span class="line">EPS_0 = epsilon_0</span><br><span class="line">QE = e</span><br><span class="line">ME = m_e</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义常量</span></span><br><span class="line">ni = <span class="number">21</span>  <span class="comment"># 节点数量</span></span><br><span class="line">x0 = <span class="number">0</span>    <span class="comment">#  网格起点</span></span><br><span class="line">xd = <span class="number">0.1</span>  <span class="comment">#   终点端</span></span><br><span class="line">dx = (xd-x0)/(ni-<span class="number">1</span>) <span class="comment"># 节点空间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建存储数组</span></span><br><span class="line">phi = np.zeros(ni) <span class="comment"># 电势</span></span><br><span class="line">rho = np.full(ni, e*<span class="number">1e12</span>) <span class="comment"># 电荷密度</span></span><br><span class="line">ef = np.zeros(ni) <span class="comment"># 电场</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 求解势</span></span><br><span class="line">solvePotentialGS(dx, phi, rho, <span class="number">2000</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算电场</span></span><br><span class="line">calculateEF(dx, ef, phi, second_order=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成测试电子</span></span><br><span class="line"></span><br><span class="line">m = ME</span><br><span class="line">q = -QE</span><br><span class="line">x = <span class="number">4</span>*dx    <span class="comment"># four cells from left edge</span></span><br><span class="line">v = <span class="number">0</span>   <span class="comment"># 静止</span></span><br><span class="line"></span><br><span class="line">dt = <span class="number">1e-10</span>  <span class="comment"># 时间步</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 速度时间回退</span></span><br><span class="line">li = X2L(x,dx)</span><br><span class="line">ef_p = gather(li,ef)</span><br><span class="line">v -= <span class="number">0.5</span>*(q/m)*ef_p*dt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为PE计算保存初始电势</span></span><br><span class="line">phi_max = phi[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, ni):</span><br><span class="line">    <span class="keyword">if</span> phi[i] &gt; phi_max:</span><br><span class="line">        phi_max = phi[i]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开粒子追踪文件</span></span><br><span class="line">outputCSV_trace(<span class="string">&#x27;time&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;v&#x27;</span>, <span class="string">&#x27;KE&#x27;</span>, <span class="string">&#x27;PE&#x27;</span>)</span><br><span class="line"></span><br><span class="line">x_old = x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 粒子循环</span></span><br><span class="line"><span class="keyword">for</span> ts <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">4000</span>):</span><br><span class="line">    <span class="comment"># 粒子位置处的网格数据</span></span><br><span class="line">    li = X2L(x, dx)</span><br><span class="line">    ef_p = gather(li, ef)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 速度和位置积分</span></span><br><span class="line">    x_old = x</span><br><span class="line">    v += (q/m)*ef_p*dt</span><br><span class="line">    x += v*dt</span><br><span class="line"></span><br><span class="line">    phi_p = gather(X2L(<span class="number">0.5</span>*(x+x_old), dx), phi)</span><br><span class="line">    <span class="comment"># phi (x(k-0.5))</span></span><br><span class="line">    ke = <span class="number">0.5</span>*m*v*v/QE      <span class="comment"># KE in eV</span></span><br><span class="line">    pe = q*(phi_p-phi_max)/QE   <span class="comment"># PE in eV</span></span><br><span class="line"></span><br><span class="line">    outputCSV_trace(ts*dt, x, v, ke, pe)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ts == <span class="number">1</span> <span class="keyword">or</span> ts % <span class="number">1000</span> == <span class="number">0</span>:  <span class="comment"># 使用 `or` 而不是 `||` 来连接条件</span></span><br><span class="line">    <span class="comment"># 使用 Python 的 print 函数和 f-string 来格式化输出</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;ts: <span class="subst">&#123;ts&#125;</span>, x: <span class="subst">&#123;x&#125;</span>, v: <span class="subst">&#123;v&#125;</span>, KE: <span class="subst">&#123;ke&#125;</span>, PE: <span class="subst">&#123;pe&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    outputCSV(x0, dx, phi, rho, ef)</span><br></pre></td></tr></table></figure>
+<h2 id="julia实现">Julia实现</h2>
+<figure class="highlight julia"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> LinearAlgebra</span><br><span class="line"><span class="keyword">using</span> Printf</span><br><span class="line"><span class="keyword">using</span> CSV</span><br><span class="line"><span class="keyword">using</span> DataFrames</span><br><span class="line"><span class="keyword">using</span> PhysicalConstants.CODATA2018</span><br><span class="line"><span class="keyword">using</span> Unitful</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将给定的场输出到CSV文件中</span></span><br><span class="line"><span class="keyword">function</span> outputCSV(x0, dx, phi, rho, ef)</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">        df = DataFrame(x = x0 .+ (<span class="number">0</span>:length(phi)-<span class="number">1</span>) * dx,</span><br><span class="line">                       phi = phi,</span><br><span class="line">                       rho = rho,</span><br><span class="line">                       ef = ef)</span><br><span class="line">        CSV.write(<span class="string">&quot;/path/to//results.csv&quot;</span>, df)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">catch</span> e</span><br><span class="line">        println(<span class="string">&quot;Error: Can&#x27;t open results.csv，该文件不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将粒子跟踪信息输出到CSV文件中</span></span><br><span class="line"><span class="keyword">function</span> outputCSV_trace(time, x, v, KE, PE)</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">        df = DataFrame(time = time,</span><br><span class="line">                       x = x,</span><br><span class="line">                       v = v,</span><br><span class="line">                       KE = KE,</span><br><span class="line">                       PE = PE)</span><br><span class="line">        CSV.write(<span class="string">&quot;/path/to/trace.csv&quot;</span>, df, append = <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">catch</span> e</span><br><span class="line">        println(<span class="string">&quot;Error: Can&#x27;t open trace.csv，该文件不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用Gauss Seidel方法求解势函数</span></span><br><span class="line"><span class="keyword">function</span> solvePotentialGS(dx, phi, rho, max_it)</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    dx: 网格间距，类型: 浮点</span></span><br><span class="line"><span class="string">    phi: 电势，类型: 数组</span></span><br><span class="line"><span class="string">    rho: 电荷密度，类型: 数组</span></span><br><span class="line"><span class="string">    max_it: 最大迭代次数，类型: 整数</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    L2 = <span class="number">0.0</span></span><br><span class="line">    dx2 = dx * dx</span><br><span class="line">    w = <span class="number">1.4</span></span><br><span class="line">    ni = length(phi)  <span class="comment"># mesh nodes 的数量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 求解势</span></span><br><span class="line">    <span class="keyword">for</span> solver_it <span class="keyword">in</span> <span class="number">1</span>:max_it</span><br><span class="line">        phi[<span class="number">1</span>] = <span class="number">0.0</span>  <span class="comment"># Dirichlet 边界 on left</span></span><br><span class="line">        phi[ni] = <span class="number">0.0</span>  <span class="comment"># Dirichlet 边界 on right</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Gauss Seidel 方法</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">2</span>:(ni - <span class="number">1</span>)</span><br><span class="line">            g = <span class="number">0.5</span> * (phi[i - <span class="number">1</span>] + phi[i + <span class="number">1</span>] + dx2 * rho[i] / EPS_0)</span><br><span class="line">            phi[i] = phi[i] + w * (g - phi[i])  <span class="comment"># SOR</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 收敛性检查</span></span><br><span class="line">        <span class="keyword">if</span> solver_it % <span class="number">50</span> == <span class="number">0</span></span><br><span class="line">            sum = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 内部节点，自动满足Dirichlet boundaries</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">2</span>:(ni - <span class="number">1</span>)</span><br><span class="line">                R = -rho[i] / EPS_0 - (phi[i - <span class="number">1</span>] - <span class="number">2</span> * phi[i] + phi[i + <span class="number">1</span>]) / dx2</span><br><span class="line">                sum += R * R</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">            L2 = sqrt(sum / (ni - <span class="number">2</span>))</span><br><span class="line">            <span class="keyword">if</span> L2 &lt; <span class="number">1e-6</span></span><br><span class="line">                <span class="meta">@printf</span> <span class="string">&quot;Gauss-Seidel converged after %d iterations.\n&quot;</span> solver_it</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@printf</span> <span class="string">&quot;Gauss-Seidel failed to converge, L2 = %.6e\n&quot;</span> L2</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过差分电势计算电场</span></span><br><span class="line"><span class="keyword">function</span> calculateEF(dx, ef, phi, second_order)</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    dx: 网格间距，类型: 浮点</span></span><br><span class="line"><span class="string">    ef: 电场，类型: 数组</span></span><br><span class="line"><span class="string">    phi: 电势，类型: 数组</span></span><br><span class="line"><span class="string">    second_order: 是否使用二阶中心差分，类型: 布尔值</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    ni = length(phi)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">2</span>:(ni-<span class="number">1</span>)</span><br><span class="line">        ef[i] = -(phi[i+<span class="number">1</span>] - phi[i-<span class="number">1</span>]) / (<span class="number">2</span>*dx)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> second_order</span><br><span class="line">        ef[<span class="number">1</span>] = (<span class="number">3</span>*phi[<span class="number">1</span>] - <span class="number">4</span>*phi[<span class="number">2</span>] + phi[<span class="number">3</span>]) / (<span class="number">2</span>*dx)</span><br><span class="line">        ef[ni] = (-phi[ni-<span class="number">2</span>] + <span class="number">4</span>*phi[ni-<span class="number">1</span>] - <span class="number">3</span>*phi[ni]) / (<span class="number">2</span>*dx)</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        ef[<span class="number">1</span>] = (phi[<span class="number">1</span>] - phi[<span class="number">2</span>]) / dx</span><br><span class="line">        ef[ni] = (phi[ni-<span class="number">1</span>] - phi[ni]) / dx</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> gather(li, f)</span><br><span class="line">    i = <span class="built_in">Int</span>(floor(li))</span><br><span class="line">    di = li - i</span><br><span class="line">    <span class="keyword">return</span> f[i] * (<span class="number">1</span> - di) + f[i + <span class="number">1</span>] * di</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> X2L(x, dx, x0=<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> (x - x0) / dx +<span class="number">1</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义常量</span></span><br><span class="line">EPS_0 = ustrip(PhysicalConstants.CODATA2018.ε_0)   <span class="comment"># 真空介电常数</span></span><br><span class="line">QE = ustrip(PhysicalConstants.CODATA2018.e)          <span class="comment"># 电子电荷</span></span><br><span class="line">ME = ustrip(PhysicalConstants.CODATA2018.m_e)         <span class="comment"># 电子质量</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义网格常量</span></span><br><span class="line">ni = <span class="number">21</span>  <span class="comment"># 节点数量</span></span><br><span class="line">x0 = <span class="number">0</span>    <span class="comment">#  网格起点</span></span><br><span class="line">xd = <span class="number">0.1</span>  <span class="comment">#   终点端</span></span><br><span class="line">dx = (xd-x0)/(ni-<span class="number">1</span>) <span class="comment"># 节点空间</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建存储数组</span></span><br><span class="line">phi = zeros(ni)  <span class="comment"># 电势</span></span><br><span class="line">rho = fill(QE*<span class="number">1e12</span>, ni)  <span class="comment"># 电荷密度</span></span><br><span class="line">ef = zeros(ni)  <span class="comment"># 电场</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 求解势</span></span><br><span class="line">solvePotentialGS(dx, phi, rho, <span class="number">2000</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算电场</span></span><br><span class="line">calculateEF(dx, ef, phi, <span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成测试电子</span></span><br><span class="line"></span><br><span class="line">m = ME</span><br><span class="line">q = -QE</span><br><span class="line">x = <span class="number">4</span>*dx    <span class="comment"># four cells from left edge</span></span><br><span class="line">v = <span class="number">0</span>   <span class="comment"># 静止</span></span><br><span class="line"></span><br><span class="line">dt = <span class="number">1e-10</span>  <span class="comment"># 时间步</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 速度时间回退</span></span><br><span class="line">li = X2L(x, dx)</span><br><span class="line">ef_p = gather(li, ef)</span><br><span class="line">v -= <span class="number">0.5</span>*(q/m)*ef_p*dt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为PE计算保存初始电势</span></span><br><span class="line">phi_max = phi[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">2</span>:ni</span><br><span class="line">    <span class="keyword">if</span> phi[i] &gt; phi_max</span><br><span class="line">        <span class="keyword">global</span> phi_max = phi[i]</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开粒子追踪文件</span></span><br><span class="line">outputCSV_trace(<span class="string">&quot;time&quot;</span>, <span class="string">&quot;x&quot;</span>, <span class="string">&quot;v&quot;</span>, <span class="string">&quot;KE&quot;</span>, <span class="string">&quot;PE&quot;</span>)</span><br><span class="line"></span><br><span class="line">x_old = x</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ts <span class="keyword">in</span> <span class="number">1</span>:<span class="number">3999</span></span><br><span class="line">    <span class="comment"># 粒子位置处的逻辑坐标与</span></span><br><span class="line">    li = X2L(x, dx)</span><br><span class="line">    ef_p = gather(li, ef)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 速度和位置积分</span></span><br><span class="line">    <span class="keyword">global</span> x_old = x</span><br><span class="line">    <span class="keyword">global</span> v += (q/m) * ef_p * dt</span><br><span class="line">    <span class="keyword">global</span> x += v * dt</span><br><span class="line"></span><br><span class="line">    phi_p = gather(X2L(<span class="number">0.5</span> * (x + x_old), dx), phi)</span><br><span class="line">    <span class="comment"># phi (x(k-0.5))</span></span><br><span class="line">    ke = <span class="number">0.5</span> * m * v * v / QE  <span class="comment"># KE in eV</span></span><br><span class="line">    pe = q * (phi_p - phi_max) / QE  <span class="comment"># PE in eV</span></span><br><span class="line"></span><br><span class="line">    outputCSV_trace(ts * dt, x, v, ke, pe)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ts == <span class="number">1</span> || ts % <span class="number">1000</span> == <span class="number">0</span></span><br><span class="line">        println(<span class="string">&quot;ts: <span class="variable">$ts</span>, x: <span class="variable">$x</span>, v: <span class="variable">$v</span>, KE: <span class="variable">$ke</span>, PE: <span class="variable">$pe</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    outputCSV(x0, dx, phi, rho, ef)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column"><img src="/images/plasma-sec-1-1-11.png" /></div><div class="group-picture-column"><img
+src="/images/plasma-sec-1-1-12.png" /></div></div></div>
+<h2 id="小结">小结</h2>
+<p>等离子体计算的流程图</p>
+<img src="/images/%E5%8D%95%E4%B8%AA%E7%94%B5%E5%AD%90%E5%9C%A8%E7%A6%BB%E5%AD%90%E4%B8%AD%E7%9A%84%E8%BF%90%E5%8A%A8.png" class="" width="400">
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%80%9A%E8%BF%87%E7%A4%BA%E4%BE%8B%E8%AE%B2%E8%A7%A3%E7%AD%89%E7%A6%BB%E5%AD%90%E4%BD%93%E6%A8%A1%E6%8B%9F/" rel="tag"># 通过示例讲解等离子体模拟</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/year/01/04/ProbabilityAndStatistics/" rel="prev" title="概率与统计">
+                  <i class="fa fa-chevron-left"></i> 概率与统计
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/year/01/27/PlasmaEnergeticsInPulsedLaser/" rel="next" title="脉冲激光沉积过程中的等离子能量学">
+                  脉冲激光沉积过程中的等离子能量学 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dr. Zhou</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<!-- <br /> -->
+<!-- Dr. Zhou从事科研工作的时间 -->
+<span id="timeDate">载入天数...</span>
+<!-- <span id="times">载入时分秒...</span> -->
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/02/2016 8:00:00");//此处修改你的建站时间或者网站上线时间
+        now.setTime(now.getTime()+250);
+	years = (now - grt ) / 1000 / 60 / 60 / 24 / 365; ynum = Math.floor(years);
+        days = (now - grt ) / 1000 / 60 / 60 / 24 - (365*ynum) ; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum)- (365*24*ynum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum)- (60*365*24*ynum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000- (60*60*365*24*ynum) - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); 
+        if(String(snum).length ==1 ){snum = "0" + snum;}
+        // var times = document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+        document.getElementById("timeDate").innerHTML = "Dr. Zhou 正式从事科研工作： "+ynum+" 年 " +dnum+" 天 "+hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/G-D-Zhou" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

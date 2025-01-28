@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-32X32.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32X32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-32X32.png">
+  <link rel="mask-icon" href="/images/logo-32X32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"g-d-zhou.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="“Introductory Solid State Physics with MATLAB Applications” 一书的学习笔记。 晶体结构基础 理想晶体被理解为结构单元在空间中的无限重复。 晶格与基元 所有晶体的结构都可以用晶格来描述，每个格点上都存在原子群。我们做出如下定义：晶格在某一维度上是无限延伸的点阵列，其中每个点都被它近邻的点以相同的方式包围。 从定义上来看，晶格是一种数学抽象，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="晶体学简介">
+<meta property="og:url" content="https://g-d-zhou.github.io/year/07/15/crystalStructure/index.html">
+<meta property="og:site_name" content="格物轩">
+<meta property="og:description" content="“Introductory Solid State Physics with MATLAB Applications” 一书的学习笔记。 晶体结构基础 理想晶体被理解为结构单元在空间中的无限重复。 晶格与基元 所有晶体的结构都可以用晶格来描述，每个格点上都存在原子群。我们做出如下定义：晶格在某一维度上是无限延伸的点阵列，其中每个点都被它近邻的点以相同的方式包围。 从定义上来看，晶格是一种数学抽象，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-07-15T05:41:21.000Z">
+<meta property="article:modified_time" content="2024-07-20T03:32:02.000Z">
+<meta property="article:author" content="Dr. Zhou">
+<meta property="article:tag" content="固体物理学概论">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://g-d-zhou.github.io/year/07/15/crystalStructure/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://g-d-zhou.github.io/year/07/15/crystalStructure/","path":"year/07/15/crystalStructure/","title":"晶体学简介"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>晶体学简介 | 格物轩</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">格物轩</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">学习、笔记与分享</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="格物轩">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%B6%E4%BD%93%E7%BB%93%E6%9E%84%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">晶体结构基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%B6%E6%A0%BC%E4%B8%8E%E5%9F%BA%E5%85%83"><span class="nav-number">1.1.</span> <span class="nav-text">晶格与基元</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%B6%E6%A0%BC%E5%B9%B3%E7%A7%BB%E7%9F%A2%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">晶格平移矢量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%9F%A2"><span class="nav-number">1.3.</span> <span class="nav-text">基矢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%9F%BA%E5%85%83%E5%92%8C%E6%99%B6%E4%BD%93%E7%BB%93%E6%9E%84%E7%9A%84%E8%BF%9B%E4%B8%80%E6%AD%A5%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.4.</span> <span class="nav-text">关于基元和晶体结构的进一步介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E8%83%9E"><span class="nav-number">1.5.</span> <span class="nav-text">原胞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%B4%E6%A0%BC%E7%BA%B3-%E5%A1%9E%E8%8C%A8%E5%8E%9F%E8%83%9E"><span class="nav-number">1.6.</span> <span class="nav-text">维格纳-塞茨原胞</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%99%B6%E6%A0%BC%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">基本晶格类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%9B%E5%8D%A1%E5%B0%94%E5%9D%90%E6%A0%87%E7%B3%BB%E4%B8%8B%E7%9A%84%E6%99%B6%E4%BD%93"><span class="nav-number">2.1.</span> <span class="nav-text">笛卡尔坐标系下的晶体</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E7%BA%A7%E8%A1%A8%E9%9D%A2%E5%BE%AE%E8%A7%82%E5%BD%A2%E8%B2%8C"><span class="nav-number">3.</span> <span class="nav-text">原子级表面微观形貌</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dr. Zhou"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Dr. Zhou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://g-d-zhou.github.io/year/07/15/crystalStructure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Dr. Zhou">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="格物轩">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="晶体学简介 | 格物轩">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          晶体学简介
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-07-15 13:41:21" itemprop="dateCreated datePublished" datetime="2024-07-15T13:41:21+08:00">2024-07-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-07-20 11:32:02" itemprop="dateModified" datetime="2024-07-20T11:32:02+08:00">2024-07-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%87%8F%E5%AD%90%E5%8A%9B%E5%AD%A6%E4%B8%8E%E5%87%9D%E8%81%9A%E6%80%81%E7%89%A9%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">量子力学与凝聚态物理</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>“Introductory Solid State Physics with MATLAB Applications”
+一书的学习笔记。</p>
+<h2 id="晶体结构基础">晶体结构基础</h2>
+<p>理想晶体被理解为结构单元在空间中的无限重复。</p>
+<h3 id="晶格与基元">晶格与基元</h3>
+<p>所有晶体的结构都可以用<strong>晶格</strong>来描述，每个格点上都存在<strong>原子群</strong>。我们做出如下定义：晶格在某一维度上是无限延伸的点阵列，其中每个点都被它近邻的点以相同的方式包围。
+从定义上来看，晶格是一种数学抽象，每个格点被称为构成该晶格的点。
+原子群被称为<strong>基元</strong>。基元可以是一个、两个、或多个原子。当基元在空间中按照晶格几何重复排列时，就形成了晶体。</p>
+<h3 id="晶格平移矢量">晶格平移矢量</h3>
+<p>在数学上，根据晶格平移矢量构建晶格。晶体中的一般矢量写为: <span
+class="math display">\[\begin{equation}\label{equ-1-2-1}
+    \vec{r}^{\prime}=\vec{r}+\vec{T}
+\end{equation}\]</span> 以使得从<span
+class="math inline">\(\vec{r}^{\prime}\)</span>看原子排列与从<span
+class="math inline">\(\vec{r}\)</span>看时原子排列相同。 此处，<span
+class="math inline">\(\vec{T}\)</span>是。</p>
+<p><span class="math display">\[\begin{equation}\label{equ-1-2-2}
+    \vec{T}=u_1 \vec{a}_1+u_2 \vec{a}_2+u_3 \vec{a}_3
+\end{equation}\]</span> 或<strong>晶格平移矢量</strong>。其中，<span
+class="math inline">\(u_1\)</span>、<span
+class="math inline">\(u_2\)</span>、<span
+class="math inline">\(u_3\)</span>是任意整数。而<span
+class="math inline">\(\vec{a}_1\)</span>、<span
+class="math inline">\(\vec{a}_2\)</span>、<span
+class="math inline">\(\vec{a}_3\)</span>则是基本平移矢量。
+我们将在下面讨论基本平移矢量的一个例子：基(平移)矢(量)。</p>
+<h3 id="基矢">基矢</h3>
+<p>考虑晶体中原子排列看起来相同的两个点<span
+class="math inline">\(\vec{r}\)</span>和<span
+class="math inline">\(\vec{r}^{\prime}\)</span>， 选择合适的<span
+class="math inline">\(u_1\)</span>、<span
+class="math inline">\(u_2\)</span>、<span
+class="math inline">\(u_3\)</span> (整数)以满足方程<span
+class="math inline">\(\ref{equ-1-2-1}\)</span>，则<span
+class="math inline">\(\vec{a}_1\)</span>、<span
+class="math inline">\(\vec{a}_2\)</span>、<span
+class="math inline">\(\vec{a}_3\)</span> (由此创建晶胞)是基元。
+这也意味着<span
+class="math inline">\(\vec{T}\)</span>是真正的晶格平移矢量。
+显然除基矢以外，存在任意矢量集使得方程<span
+class="math inline">\(\ref{equ-1-2-1}\)</span>也成立。然而，基矢是空间中可以重复形成晶体结构的最小体积。
+这里我们使用基矢所定义的基元晶轴来取代笛卡尔坐标，例如它们不必是正交的。
+有时物理学家使用非基矢晶轴，当它们与晶体结构的对称性有更简单的关系时。
+非基矢晶轴也可以构成晶体，但这些轴所围成的体积不一定是重复形成晶体结构的最小体积。</p>
+<p>综上所述，为了描述一个晶体结构，我们需要以下几个方面：</p>
+<ul>
+<li>什么是晶格？</li>
+<li>确定<span class="math inline">\(\vec{a}_1\)</span>、<span
+class="math inline">\(\vec{a}_2\)</span>、<span
+class="math inline">\(\vec{a}_3\)</span>的最优选择，无论它们是否是基矢。</li>
+<li>什么是基元？</li>
+</ul>
+<p>上述的平移操作<span
+class="math inline">\(\vec{T}\)</span>属于对称操作。有几种对称性操作：(a)平移，(b)转动，(c)反映，以及(d)其中两个或多个的复合操作。
+对称性操作是重要的，因为对晶体结构进行这些操作之后，晶格保持不变。</p>
+<h3
+id="关于基元和晶体结构的进一步介绍">关于基元和晶体结构的进一步介绍</h3>
+<p>如前所述，每个格点上都存在原子基元，每个基元在组成、排列和取向上都相同。
+让我们考虑略有不同的矩形晶格。</p>
+<p>正如我们所看到的，基元中的原子数可能不止一个。基元的中心原子<span
+class="math inline">\(j\)</span>相对于相应格点的位置为： <span
+class="math display">\[\begin{equation}\label{equ-1-2-3}
+    \vec{r}_j=x_j \vec{a}_1+y_j \vec{a}_2+z_j \vec{a}_3
+\end{equation}\]</span> 其中，<span
+class="math inline">\(j=1,2,...\)</span>是基元中原子的个数。与方程<span
+class="math inline">\(\ref{equ-1-2-2}\)</span>中的<span
+class="math inline">\(u_1\)</span>、<span
+class="math inline">\(u_2\)</span>以及<span
+class="math inline">\(u_3\)</span>不同，<span
+class="math inline">\(x_j\)</span>、<span
+class="math inline">\(y_j\)</span>和<span
+class="math inline">\(z_j\)</span>可能是非整数。</p>
+<h3 id="原胞">原胞</h3>
+<p>原胞是由基矢构成的最小体积(或二维中的体积，一维中的长度)。它是一种晶胞或单胞。一个晶胞可以通过合适的晶体对称性操作，进行自身的重复来填充所有空间。</p>
+<p>选择基矢和原胞的方法有很多种。虽然原胞中的原子数可以不止一个，但对于给定的晶体结构，原胞中的原子数总是相同的。
+由基矢定义的面积或体积是相等的，因为它们都定义了构建晶体的单元格。</p>
+<p>在三维空间，平行六面体的体积为： <span
+class="math display">\[\begin{equation}\label{equ-1-2-5}
+    V=\left|\left(\vec{a}_1 \times \vec{a}_2\right) \cdot
+\vec{a}_3\right|
+\end{equation}\]</span>
+为了数值计算，Python附录中描述了在该环境下进行<span
+class="math inline">\(\times\)</span>和点乘操作的方法。</p>
+<h3 id="维格纳-塞茨原胞">维格纳-塞茨原胞</h3>
+<p>维格纳-塞茨方法是一种非常精确获取原胞(维格纳-塞茨原胞)的方法。具体方法如下：</p>
+<ul>
+<li>通过画线将给定格点与附近所有格点连接；</li>
+<li>在这些直线的中点和法线处，画出新的直线(二维)或平面(三维)；</li>
+<li>这样围成的最小面积(二维)或体积(三维)就是维格纳-赛茨原胞。</li>
+</ul>
+<h2 id="基本晶格类型">基本晶格类型</h2>
+<p>晶格可以通过晶格对称操作与其自身重合。常见的操作是关于格点的旋转。可以发现晶格有一重(360
+度)、二重(180 度)、三重(120 度)、四重(90 度)和六重(60
+度)旋转，对应的旋转为<span class="math inline">\(2m\pi
+/n\)</span>，其中<span
+class="math inline">\(n\)</span>分别为1、2、3、4和6，<span
+class="math inline">\(m\)</span>为整数。旋转轴用指数<span
+class="math inline">\(n\)</span>表示。</p>
+<p>格点群是对称操作的集合。将其应用于格点后晶体与其自身重合。我们有：</p>
+<ul>
+<li>关于轴的可能旋转( <span class="math inline">\(2\pi / n\)</span>
+,其中<span class="math inline">\(n = 1 , 2 , 3 , 6\)</span>)，记作<span
+class="math inline">\(C_n\)</span>旋转(C是cyclic的首字母)旋转；</li>
+<li>关于通过一个格点的平面的镜面反映。此处，垂直于镜面的轴线符号发生变化(例如当镜面垂直于<span
+class="math inline">\(z\)</span>轴时，<span class="math inline">\(z\to -
+z\)</span>)。该操作被称为<span class="math inline">\(m\)</span>或<span
+class="math inline">\(\sigma\)</span>操作(如(b)所示)；</li>
+<li>反演，先旋转<span
+class="math inline">\(\pi\)</span>后再关于垂直于旋转轴的平面反映(此处，若旋转轴为<span
+class="math inline">\(z\)</span>轴，旋转导致<span
+class="math inline">\(x\)</span>和<span
+class="math inline">\(y\)</span>轴都发生了变号，反映又使得<span
+class="math inline">\(z\)</span>轴变号)，总的效果是<span
+class="math inline">\(\vec{r}\to -\vec{r}\)</span>。用<span
+class="math inline">\(i\)</span> (反演)或<span
+class="math inline">\(s_4\)</span>表示(以用于组合运算)；</li>
+</ul>
+<h3 id="笛卡尔坐标系下的晶体">笛卡尔坐标系下的晶体</h3>
+<p>考虑<span class="math inline">\(x\)</span>-<span
+class="math inline">\(y\)</span>-<span
+class="math inline">\(z\)</span>正交坐标系，令矢量<span
+class="math inline">\(\vec{a}\)</span>沿<span
+class="math inline">\(x\)</span>方向，使得： <span
+class="math display">\[\begin{equation}\label{equ-1-3-6}
+\vec{a} = a \hat{x}
+\end{equation}\]</span> 另外，令<span
+class="math inline">\(\vec{b}\)</span>位于<span
+class="math inline">\(x\)</span>-<span
+class="math inline">\(y\)</span>平面上。</p>
+<p>我们可将<span class="math inline">\(\vec{b}\)</span>写成如下形式：
+<span class="math display">\[\begin{equation}\label{equ-1-3-7}
+    \vec{b}=b_1 \hat{x}+b_2 \hat{y}=b \cos \gamma \hat{x}+b \sin \gamma
+\hat{y}
+\end{equation}\]</span> 接下令<span
+class="math inline">\(\vec{c}\)</span>在任意方向，也就是： <span
+class="math display">\[\begin{equation}\label{equ-1-3-8}
+    \vec{c}=c_1 \hat{x}+c_2 \hat{y}+c_3 \hat{z}=c \cos \beta \hat{x}+c_2
+\hat{y}+c_3 \hat{z}
+\end{equation}\]</span> 因此，<span
+class="math inline">\(\vec{a}\cdot\vec{c}=ac\cos\beta=a\hat{x}\cdot(c_1\hat{x}+c_2\hat{y}+c_3\hat{z})=ac_1\)</span>，
+也就是， <span class="math display">\[\begin{equation}\label{equ-1-3-9}
+c_1=c\cos\beta
+\end{equation}\]</span> 类似的，我们有<span
+class="math inline">\(\vec{b}\cdot\vec{c}=bc\cos\alpha=(b\cos\gamma\hat{x}+b\sin\gamma\hat{y})\cdot(c_1\hat{x}+c_2\hat{y}+c_3\hat{z})=bc_1\cos\gamma+bc_2\sin\gamma\)</span>。
+利用方程<span class="math inline">\(\ref{equ-1-3-9}\)</span>可得： <span
+class="math display">\[\begin{equation}\label{equ-1-3-10}
+    \vec{b}\cdot\vec{c}=bc\cos\alpha=bc\cos\beta\cos\gamma+bc_2\sin\gamma
+\end{equation}\]</span> 或 <span
+class="math display">\[\begin{equation}\label{equ-1-3-11}
+    c_2=\frac{c(\cos\alpha-\cos\beta\cos\gamma)}{\sin\gamma}
+\end{equation}\]</span> 最后， <span
+class="math display">\[\begin{equation}\label{equ-1-3-12-a}
+    |\vec{c}|^2=c^2=c_1^2+c_2^2+c_3^2
+\end{equation}\]</span> 利用方程<span
+class="math inline">\(\ref{equ-1-3-9}\)</span>和方程<span
+class="math inline">\(\ref{equ-1-3-11}\)</span>，我们有： <span
+class="math display">\[\begin{equation}\label{equ-1-3-12-b}
+    c_3=\sqrt{c^2-c_2^2-c_3^2}=c\sqrt{1-\cos^2\beta-(\frac{\cos\alpha-\cos\beta\cos\gamma}{\cos\gamma})}
+\end{equation}\]</span> 注意到，我们可将方程<span
+class="math inline">\(\ref{equ-1-3-6}\)</span>到方程<span
+class="math inline">\(\ref{equ-1-3-8}\)</span>写成如下形式： <span
+class="math display">\[\begin{equation}\label{equ-1-3-13-a}
+    \left(
+    \begin{array}{ccc}
+        \vec{a} &amp; \vec{b} &amp; \vec{c}
+    \end{array}
+    \right) = \left(
+                    \begin{array}{ccc}
+                        \hat{x}&amp;\hat{y}&amp;\hat{z}
+                    \end{array}
+                    \right)  \left(
+                                    \begin{array}{ccc}
+                                        a&amp;b\cos\gamma&amp;c_1\\
+                                        0&amp;b\sin\gamma&amp;c_2\\
+                                        0&amp;0&amp;c_3
+                                    \end{array}
+                                    \right) = \left(
+                                                    \begin{array}{ccc}
+                                                        \hat{x}&amp;\hat{y}&amp;\hat{z}
+                                                    \end{array}
+                                                \right) C
+\end{equation}\]</span> 其中，</p>
+<p><span class="math display">\[\begin{equation}\label{equ-1-3-13-b}
+    C\equiv\left(\begin{array}{ccc}a&amp;b\cos\gamma&amp;c_1\\
+0&amp;b\sin\gamma&amp;c_2\\ 0&amp;0&amp;c_3\end{array}\right)
+\end{equation}\]</span></p>
+<p><span class="math inline">\(c_1\)</span>、<span
+class="math inline">\(c_2\)</span>以及<span
+class="math inline">\(c_3\)</span>则由方程<span
+class="math inline">\(\ref{equ-1-3-9}\)</span>至<span
+class="math inline">\(\ref{equ-1-3-12-a}\)</span>给出。</p>
+<p>接下来，考虑给出晶体坐标中原子位置的矢量<span
+class="math inline">\(\vec{t}\)</span>，如： <span
+class="math display">\[\begin{equation}
+    \vec{t}=u\vec{a}+\nu\vec{b}+w\vec{c}
+\end{equation}\]</span></p>
+<p>其中，<span class="math inline">\(u\)</span>、<span
+class="math inline">\(v\)</span>和<span
+class="math inline">\(w\)</span>是整数。问题出现了，这个原子相对于原点的笛卡尔坐标是什么？
+重写<span class="math inline">\(\vec{t}\)</span>则可给出答案： <span
+class="math display">\[\begin{equation}
+    \vec{t}=x\hat{x}+y\hat{y}+z\hat{z}=u\vec{a}+\nu\vec{b}+w\vec{c}.
+\end{equation}\]</span></p>
+<p>借助方程<span
+class="math inline">\(\ref{equ-1-3-13-a}\)</span>中行矢量<span
+class="math inline">\((\begin{array}{ccc}\vec{a}&amp;\vec{b}&amp;\vec{c}\end{array})\)</span>的帮助，
+上式变成： <span class="math display">\[\begin{equation}
+    \vec{t}=(\begin{array}{ccc}\widehat{x}&amp;\widehat{y}&amp;\widehat{z}\end{array})\left(\begin{array}{c}x\\y\\z\end{array}\right)=(\begin{array}{ccc}\hat{x}&amp;\hat{y}&amp;\hat{z}\end{array})\boldsymbol{C}\left(\begin{array}{c}u\\\nu\\w\end{array}\right)
+\end{equation}\]</span> 或者 <span
+class="math display">\[\begin{equation}
+    \left.\left(\begin{array}{c}x\\y\\z\end{array}\right.\right)=C\left(\begin{array}{c}u\\\nu\\w\end{array}\right)
+\end{equation}\]</span>
+这些是根据晶体轴的大小寻求的笛卡尔坐标大小。在这里，矩阵C被称为转换矩阵。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> cos, sin, sqrt, array, pi, shape, dot</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">angle2Radian</span>(<span class="params">angle</span>):</span><br><span class="line">    <span class="keyword">return</span> angle*pi/<span class="number">180</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">crystalAxes2Cartesian</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, a, b, c, alpha, beta, gamma</span>):</span><br><span class="line">        self.a = a  <span class="comment"># 坐标轴单位为angstroms</span></span><br><span class="line">        self.b = b</span><br><span class="line">        self.c = c</span><br><span class="line">        self.alpha = angle2Radian(alpha)  <span class="comment"># 角度转弧度</span></span><br><span class="line">        self.beta = angle2Radian(beta)</span><br><span class="line">        self.gamma = angle2Radian(gamma)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 定义C矩阵</span></span><br><span class="line">        c1 = c*cos(self.beta)</span><br><span class="line">        c2 = c*(cos(self.alpha) - cos(self.gamma)*cos(self.beta)/sin(self.gamma))</span><br><span class="line">        c3 = sqrt(c**<span class="number">2</span> - c1**<span class="number">2</span> - c2**<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        self.C = array([</span><br><span class="line">                     [a, b*cos(self.gamma),   c1],</span><br><span class="line">                     [<span class="number">0</span>, b*sin(self.gamma),   c2],</span><br><span class="line">                     [<span class="number">0</span>, <span class="number">0</span>,              c3]</span><br><span class="line">                     ])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">cal</span>(<span class="params">self, u, v, w</span>):</span><br><span class="line">        vector = array([u,v,w])</span><br><span class="line">        <span class="keyword">return</span> dot(self.C, vector)</span><br></pre></td></tr></table></figure>
+<h2 id="原子级表面微观形貌">原子级表面微观形貌</h2>
+<p>STM技术是由Gerd Binnig与Heinrich
+Rohrer共同开发的，他们因这一成就在1986年获得了诺贝尔奖。
+在这种技术中，会在一个金属探针和感兴趣的样品之间施加一个恒定的偏压电压。当探针尖端在表面移动时，
+样品电子会通过间隙（宽度为<span
+class="math inline">\(d\)</span>）从样品隧穿到探针。
+隧穿电流与量子力学隧穿概率成正比：<span
+class="math inline">\(I\sim|T|\)</span>。 <span
+class="math display">\[\begin{equation}\label{equ-1-7-19a}
+    T=\frac{|\psi_{transmitted}|^2}{|\psi_{incident}|^2}\sim\exp(-2kd)
+\end{equation}\]</span> 其中， <span
+class="math display">\[\begin{equation}
+    k=\sqrt{\frac{2m}{\hbar^2}(W-E)}
+\end{equation}\]</span></p>
+<p>以<span class="math inline">\(m\)</span>表示电子的质量；<span
+class="math inline">\(E\)</span>代表电子的动能；而<span
+class="math inline">\(W\)</span>则是样品电子的功函数（跃过能隙所需的最小能量）。
+电子的动能可以与所施加的电压相关联，即<span
+class="math inline">\(E=e\phi_{app}\)</span>；通过分析隧穿电流，可以对晶体样品的表面结构进行成像。</p>
+<p>对于这个模型，电子会经历量子力学隧穿。在一维情况下，如果我们有一个高度为<span
+class="math inline">\(V = V_0\)</span>、宽度为<span
+class="math inline">\(a\)</span>的量子力学势垒，携带能量<span
+class="math inline">\(E\)</span>的电子具有一个通过障碍的概率，这个概率由下式给出：
+<span class="math display">\[\begin{equation} \label{equ-1-7-20a}
+    T=\frac{|\psi_{transmitted}|^2}{|\psi_{incident}|^2}=\frac1{1+D\sinh^2(\alpha
+a)}
+\end{equation}\]</span> 其中， <span
+class="math display">\[\begin{equation}
+    D=\frac{V_0^2}{4E(V_0-E)}
+\end{equation}\]</span> 以及， <span
+class="math display">\[\begin{equation}
+    \alpha=\sqrt{\frac{2m}{\hbar^2}(V_0-E)}
+\end{equation}\]</span></p>
+<p>在<span class="math inline">\(\alpha
+a\gg1\)</span>的极限下，并令<span class="math inline">\(V_0 =
+W\)</span>。方程<span
+class="math inline">\(\ref{equ-1-7-20a}\)</span>变成： <span
+class="math display">\[\begin{equation}
+    T=\frac{|\psi_{transmitted}|^2}{|\psi_{incident}|^2}\approx
+T_0\exp(-2kd)
+\end{equation}\]</span> 其中， <span
+class="math display">\[\begin{equation}
+    T_0=\frac{16E(W-E)}{W^2}
+\end{equation}\]</span></p>
+<p>通过粗略地令<span class="math inline">\(T_0\sim
+1\)</span>，则上面的方程又变回了方程<span
+class="math inline">\(\ref{equ-1-7-19a}\)</span>。 让我们用方程<span
+class="math inline">\(\ref{equ-1-7-19a}\)</span>做一个简单的数值模拟。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scipy.constants <span class="keyword">as</span> C</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">hbC = C.hbar*C.c*<span class="number">1E9</span>/C.e    <span class="comment"># hbar*C in eV nm</span></span><br><span class="line">mc2 = C.m_e*C.c**<span class="number">2</span>/C.e  <span class="comment"># rest mass of the electron mc^2 in eV</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在这里，我们采用近似的隧穿公式，及振幅约等于1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">tunnel0</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, V0, d</span>): <span class="comment"># V0 功函数</span></span><br><span class="line">        self.V0 = V0</span><br><span class="line">        self.Va = np.arange(<span class="number">0</span>, self.V0 + self.V0/<span class="number">100.0</span>, self.V0/<span class="number">100.0</span>)     <span class="comment"># applied voltage in electron volts</span></span><br><span class="line">        self.E = self.Va</span><br><span class="line">        </span><br><span class="line">        self.k = np.sqrt(<span class="number">2</span>*mc2*(self.V0-self.E)/hbC**<span class="number">2</span>)</span><br><span class="line">        self.d = d      <span class="comment"># gap width in nm</span></span><br><span class="line">        self.T1_approx = np.exp(-<span class="number">2.0</span>*self.k*self.d) <span class="comment"># approximation</span></span><br><span class="line">        </span><br><span class="line">        self.plotTvsE()</span><br><span class="line">        self.plotTvsa()</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 显示图形</span></span><br><span class="line">        plt.show()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">plotTvsE</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 创建子图</span></span><br><span class="line">        plt.subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        plt.plot(self.E, self.T1_approx, <span class="string">&#x27;k--&#x27;</span>, linewidth=<span class="number">2</span>)</span><br><span class="line">        plt.axis([<span class="number">0</span>, <span class="number">1.1</span>*self.V0, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">        plt.text(<span class="number">0.1</span>, <span class="number">0.8</span>, <span class="string">r&#x27;$T(E)=e^&#123;-2.0k(E)d&#125;$&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">        plt.xlabel(<span class="string">&#x27;E (eV)&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">        plt.ylabel(<span class="string">&#x27;T&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">        plt.title(<span class="string">&#x27;T vs E&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">plotTvsa</span>(<span class="params">self</span>):</span><br><span class="line">        s = np.arange(<span class="number">0</span>, self.d+self.d/<span class="number">25</span>, self.d/<span class="number">25</span>)</span><br><span class="line">        EE = <span class="number">0.5</span>*self.V0</span><br><span class="line">        k = np.sqrt(<span class="number">2</span>*mc2*(self.V0-EE)/hbC**<span class="number">2</span>)</span><br><span class="line">        T2_approx = np.exp(-<span class="number">2</span>*k*s)</span><br><span class="line">        </span><br><span class="line">        plt.subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">        plt.plot(s, T2_approx, <span class="string">&#x27;k--&#x27;</span>, linewidth=<span class="number">2</span>)</span><br><span class="line">        plt.axis([<span class="number">0</span>, <span class="number">1.1</span>*self.d, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">        plt.text(self.d/<span class="number">4</span>, <span class="number">0.4</span>, <span class="string">r&#x27;$T(d)=e^&#123;-2.0kd&#125;$&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">        plt.xlabel(<span class="string">&#x27;d (nm)&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">        plt.ylabel(<span class="string">&#x27;T&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">        plt.title(<span class="string">&#x27;T vs a&#x27;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">tunnel = tunnel0(<span class="number">4.3</span>, <span class="number">0.3</span>)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BA%E4%BD%93%E7%89%A9%E7%90%86%E5%AD%A6%E6%A6%82%E8%AE%BA/" rel="tag"># 固体物理学概论</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/year/05/19/groundBox/" rel="prev" title="接地BOX">
+                  <i class="fa fa-chevron-left"></i> 接地BOX
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dr. Zhou</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<!-- <br /> -->
+<!-- Dr. Zhou从事科研工作的时间 -->
+<span id="timeDate">载入天数...</span>
+<!-- <span id="times">载入时分秒...</span> -->
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/02/2016 8:00:00");//此处修改你的建站时间或者网站上线时间
+        now.setTime(now.getTime()+250);
+	years = (now - grt ) / 1000 / 60 / 60 / 24 / 365; ynum = Math.floor(years);
+        days = (now - grt ) / 1000 / 60 / 60 / 24 - (365*ynum) ; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum)- (365*24*ynum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum)- (60*365*24*ynum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000- (60*60*365*24*ynum) - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); 
+        if(String(snum).length ==1 ){snum = "0" + snum;}
+        // var times = document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+        document.getElementById("timeDate").innerHTML = "Dr. Zhou 正式从事科研工作： "+ynum+" 年 " +dnum+" 天 "+hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/G-D-Zhou" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

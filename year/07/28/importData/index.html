@@ -31,7 +31,7 @@
 <meta property="og:description" content="目前只涉及日本理学的XRD数据。 1import xrayutilities as xu 数据导入 12[om, tt], MAP &#x3D; xu.io.getras_scan(&amp;#x27;RSM-%05d.ras&amp;#x27;,2,&amp;#x27;Omega&amp;#x27;,&amp;#x27;TwoTheta&amp;#x27;)psd &#x3D; MAP[&amp;#x27;int&amp;#x27;] 上述%05d表示文件命名规则为XXX000">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-07-28T05:48:38.000Z">
-<meta property="article:modified_time" content="2023-07-29T15:30:08.049Z">
+<meta property="article:modified_time" content="2023-07-29T15:30:08.000Z">
 <meta property="article:author" content="Dr. Zhou">
 <meta name="twitter:card" content="summary">
 
@@ -132,14 +132,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">33</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
       </div>
   </nav>
 </div>
@@ -279,7 +283,7 @@ number在wyckpos.py中查找对应数字。比如上述例子中的139，然后�
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2023</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -297,15 +301,16 @@ number在wyckpos.py中查找对应数字。比如上述例子中的139，然后�
     function createtime() {
         var grt= new Date("08/02/2016 8:00:00");//此处修改你的建站时间或者网站上线时间
         now.setTime(now.getTime()+250);
-        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
-        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
-        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+	years = (now - grt ) / 1000 / 60 / 60 / 24 / 365; ynum = Math.floor(years);
+        days = (now - grt ) / 1000 / 60 / 60 / 24 - (365*ynum) ; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum)- (365*24*ynum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum)- (60*365*24*ynum);
         mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
-        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        seconds = (now - grt ) / 1000- (60*60*365*24*ynum) - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
         snum = Math.round(seconds); 
         if(String(snum).length ==1 ){snum = "0" + snum;}
         // var times = document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
-        document.getElementById("timeDate").innerHTML = "Dr. Zhou 正式从事科研工作： "+dnum+" 天 "+hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+        document.getElementById("timeDate").innerHTML = "Dr. Zhou 正式从事科研工作： "+ynum+" 年 " +dnum+" 天 "+hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
     }
 setInterval("createtime()",250);
 </script>

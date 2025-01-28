@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-32X32.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32X32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-32X32.png">
+  <link rel="mask-icon" href="/images/logo-32X32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-bounce.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"g-d-zhou.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="原子建模基础 对于较大原子系统，从量子力学出发的计算是不太可能的。通过经典近似来描述原子系统的运动，能够捕捉到宏观系统的许多特征。 在这样的近似中，利用牛顿运动定律和对原子间作用力的恰当描述来寻找原子的运动。 这些力由给定位置的原子的势能来描述。原则上，势能函数可以从量子力学计算中确定，因为作用力和势能取决于电子的状态 --电子形成了原子间的键，是原子间作用力的来源。 然而，在经典近似中，我们将这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从分子动力学建模开始">
+<meta property="og:url" content="https://g-d-zhou.github.io/year/09/18/gettingStartedWithMDmodeling/index.html">
+<meta property="og:site_name" content="格物轩">
+<meta property="og:description" content="原子建模基础 对于较大原子系统，从量子力学出发的计算是不太可能的。通过经典近似来描述原子系统的运动，能够捕捉到宏观系统的许多特征。 在这样的近似中，利用牛顿运动定律和对原子间作用力的恰当描述来寻找原子的运动。 这些力由给定位置的原子的势能来描述。原则上，势能函数可以从量子力学计算中确定，因为作用力和势能取决于电子的状态 --电子形成了原子间的键，是原子间作用力的来源。 然而，在经典近似中，我们将这">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T12:35:43.000Z">
+<meta property="article:modified_time" content="2024-03-25T09:03:53.000Z">
+<meta property="article:author" content="Dr. Zhou">
+<meta property="article:tag" content="Statistical and Thermal Physics Using Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://g-d-zhou.github.io/year/09/18/gettingStartedWithMDmodeling/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://g-d-zhou.github.io/year/09/18/gettingStartedWithMDmodeling/","path":"year/09/18/gettingStartedWithMDmodeling/","title":"从分子动力学建模开始"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>从分子动力学建模开始 | 格物轩</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">格物轩</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">学习、笔记与分享</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="格物轩">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E5%BB%BA%E6%A8%A1%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">原子建模基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lennard-jones%E5%8A%BF"><span class="nav-number">1.1.</span> <span class="nav-text">Lennard-Jones势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">初始条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">边界条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%BF%90%E5%8A%A8%E6%96%B9%E7%A8%8B%E8%BF%9B%E8%A1%8C%E7%A7%AF%E5%88%86"><span class="nav-number">1.4.</span> <span class="nav-text">对运动方程进行积分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%AD%90%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E6%8B%9F%E5%99%A8%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">分子动力学模拟器的简单实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E9%87%8F%E7%BA%B2%E8%BF%90%E5%8A%A8%E6%96%B9%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">无量纲运动方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">系统初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E5%8A%A8%E6%96%B9%E7%A8%8B%E7%9A%84%E7%A7%AF%E5%88%86"><span class="nav-number">2.3.</span> <span class="nav-text">运动方程的积分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E8%A1%8C%E4%BA%86%E5%88%86%E5%AD%90%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E6%8B%9F"><span class="nav-number">3.</span> <span class="nav-text">进行了分子动力学模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85lammps"><span class="nav-number">3.1.</span> <span class="nav-text">安装Lammps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8lammps%E4%B8%AD%E8%BF%9B%E8%A1%8C%E4%BB%BF%E7%9C%9F"><span class="nav-number">3.2.</span> <span class="nav-text">在LAMMPS中进行仿真</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#advanced-models"><span class="nav-number">4.</span> <span class="nav-text">Advanced models</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#coarsening"><span class="nav-number">4.1.</span> <span class="nav-text">Coarsening</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%85%E6%99%B6%E4%BD%93%E7%9A%84%E6%96%AD%E8%A3%82"><span class="nav-number">4.2.</span> <span class="nav-text">硅晶体的断裂</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">5.</span> <span class="nav-text">练习</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dr. Zhou"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Dr. Zhou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://g-d-zhou.github.io/year/09/18/gettingStartedWithMDmodeling/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Dr. Zhou">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="格物轩">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="从分子动力学建模开始 | 格物轩">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从分子动力学建模开始
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-09-18 20:35:43" itemprop="dateCreated datePublished" datetime="2023-09-18T20:35:43+08:00">2023-09-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-03-25 17:03:53" itemprop="dateModified" datetime="2024-03-25T17:03:53+08:00">2024-03-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%83%AD%E5%8A%9B%E5%AD%A6%E4%B8%8E%E7%BB%9F%E8%AE%A1%E7%89%A9%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">热力学与统计物理</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="原子建模基础">原子建模基础</h2>
+<p>对于较大原子系统，从量子力学出发的计算是不太可能的。通过经典近似来描述原子系统的运动，能够捕捉到宏观系统的许多特征。
+在这样的近似中，利用牛顿运动定律和对原子间作用力的恰当描述来寻找原子的运动。
+这些力由给定位置的原子的势能来描述。原则上，势能函数可以从量子力学计算中确定，因为作用力和势能取决于电子的状态
+--电子形成了原子间的键，是原子间作用力的来源。</p>
+<p>然而，在经典近似中，我们将这个问题参数化：我们为相互作用构建简化模型，这些模型提供了相互作用的最重要特征。</p>
+<h3 id="lennard-jones势">Lennard-Jones势</h3>
+<p>此处，我们主要是用简单的模型，因为统计和热效应并没有强烈依赖系统的细节。
+对于两个惰性气体原子间的相互作用力主要有两个来源：</p>
+<ul>
+<li>由于偶极相互作用产生的吸引力：这种相互作用的势正比于<span
+class="math inline">\((1/r)^6\)</span>，其中<span
+class="math inline">\(r\)</span>为原子间的距离。即范德瓦尔斯相互作用</li>
+<li>当两个原子被推挤在一起时，由于电子轨道重叠的可能性，存在一种排斥力，这是一种量子力学效应。用<span
+class="math inline">\((1/r)^n\)</span>来表示。对于氩来说，<span
+class="math inline">\(n=12\)</span>是比较好的近似。</li>
+</ul>
+<p>该组合模型称为Lennard-Jones势：</p>
+<p><span class="math display">\[\begin{equation}
+U(r)=4
+\epsilon\left(\left(\frac{\sigma}{r}\right)^{12}-\left(\frac{\sigma}{r}\right)^6\right)
+\end{equation}\]</span></p>
+<p>当L-J势最小时：</p>
+<p><span class="math display">\[\begin{equation}
+F(r)=-\frac{d}{d r} U(r)=0,
+\end{equation}\]</span></p>
+<p>则有：</p>
+<p><span class="math display">\[\begin{equation}
+F(r)=24 \epsilon_0\left((\sigma / r)^6-2(\sigma / r)^{12}\right)=0
+\Rightarrow \frac{r}{\sigma}=2^{1 / 6}
+\end{equation}\]</span></p>
+<p>L-J不仅可以模拟氩原子之间的相互作用，还可以作为需要仿真的基础模型。</p>
+<h3 id="初始条件">初始条件</h3>
+<p>MD模拟从原子的初始构型开始，并确定所有原子的运动轨迹。初始条件由初始时刻<span
+class="math inline">\(t_0\)</span>的所有位置<span
+class="math inline">\(r_i(t_0)\)</span>和速度<span
+class="math inline">\(v_i(t_0)\)</span>组成。
+特别地，由于大多数势随着原子间距趋于零而迅速增加，因此不要将原子放置的太近。
+因此，我们经常将原子有规律地放置在空间中，在一个晶格上，初始速度是随机的。</p>
+<p>我们首先构造一个单胞，并将其复制到晶格的每一个位置，从而形成规则的单胞模式。
+通过上述方法可以构造出晶格。(单胞可以包含一个以上的原子)。</p>
+<p>此处，我们使用立方晶胞。对于单胞中只有一个原子且长度为<span
+class="math inline">\(b\)</span>的立方单胞，我们可以将原子放置在单胞中的(0,0,0)处，然后生成原子间距为<span
+class="math inline">\(b\)</span>的晶格(具体示意图参见原书Fig. 3.1)。</p>
+<p>然而，对于L-J体系，从理论实验等研究可知，平衡晶体结构不是简立方，而是面心立方。我们模拟的系统将由<span
+class="math inline">\(L\times L\times
+L\)</span>个原胞组成，每个原胞尺寸为<span class="math inline">\(b\times
+b\times b\)</span>，且有4个原子。</p>
+<h3 id="边界条件">边界条件</h3>
+<p>为了利用较小的模型得到更为宏观系统的信息，我们必须采用周期性边界条件。</p>
+<h3 id="对运动方程进行积分">对运动方程进行积分</h3>
+<p>我们通过求解运动方程来确定系统的行为。对于分子动力学模拟，通常使用Celocity-Verlet算法。
+这与前向欧拉法近似，但非常适用于保守力。 速度在<span
+class="math inline">\(t\)</span>时刻和中间时刻<span
+class="math inline">\(t+\Delta t/2\)</span>计算，其中<span
+class="math inline">\(\Delta t\)</span>为时间步长。
+而力仅在全时间步长：<span class="math inline">\(t\)</span>、<span
+class="math inline">\(t+\Delta t\)</span>以及<span
+class="math inline">\(t+2\Delta t\)</span>等计算。</p>
+<p>计算中最耗时的部分是力的计算。因此，我们希望限制我们计算力的次数，并且在我们的计算中仍然具有尽可能高的精度。Velocity-Verlet算法保证了积分算法中精度和力计算次数之间的良好折衷。</p>
+<p>在Velocity-Verlet算法中，所有原子(i = 1，..，N)的位置<span
+class="math inline">\(r_i( t )\)</span>和速度<span
+class="math inline">\(v_i(t)\)</span>在时间上向前传播：</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+\mathbf{v}_i(t+\Delta t / 2) &amp; =\mathbf{v}(t)+\mathbf{F}_i(t) / m_i
+\Delta t / 2 \\
+\mathbf{r}_i(t+\Delta t) &amp; \left.=\mathbf{r}_{(}
+t\right)+\mathbf{v}_i(t+\Delta t / 2) \\
+\mathbf{F}_i(t+\Delta t) &amp; =-\nabla V\left(\mathbf{r}_i(t+\Delta
+t)\right) \\
+\mathbf{v}_i(t+\Delta t) &amp; =\mathbf{v}(t+\Delta t /
+2)+\mathbf{F}_i(t+\Delta t) / m_i \Delta t / 2
+\end{aligned}
+\end{equation}\]</span></p>
+<p>这种方法在能量守恒方面具有很好的性质，当然，它也能很好地preserve
+momentum。</p>
+<h2 id="分子动力学模拟器的简单实现">分子动力学模拟器的简单实现</h2>
+<p>我们需要设置原子的初始构型，对给定的若干时间步的运动进行积分，然后将结果输出为标准可视化程序可以读取的文件。</p>
+<h3 id="无量纲运动方程">无量纲运动方程</h3>
+<p>对于伦纳德-琼斯模型，我们通常使用模型的固有长度(<span
+class="math inline">\(\sigma\)</span>)和能量尺度(<span
+class="math inline">\(\epsilon_0\)</span>)作为长度和能量的基本单位。
+因此模拟矢量<span
+class="math inline">\(\mathbf{r}&#39;_i\)</span>与真实世界的<span
+class="math inline">\(\mathbf{r}_i\)</span>有如下关系：</p>
+<p><span class="math display">\[\begin{equation}
+\mathbf{r}_i=\sigma \mathbf{r}_i^{\prime} \Leftrightarrow
+\mathbf{r}_i^{\prime}=\mathbf{r}_i / \sigma
+\end{equation}\]</span></p>
+<p>类似的，可以引入L-J时间，<span class="math inline">\(\tau =
+\sigma\sqrt{m/\epsilon}\)</span>。其中，<span
+class="math inline">\(m\)</span> 是原子质量，以及L-J温度 <span
+class="math inline">\(T_0 = \epsilon / k_B\)</span>。</p>
+<p>使用这些符号，我们可以使用无量纲位置和时间重写L-J系统的运动方程。
+<span
+class="math inline">\(\mathbf{r}_i^{\prime}=\mathbf{r}_i/\sigma\)</span>和<span
+class="math inline">\(t^{\prime}=t/\tau\)</span>:</p>
+<p><span class="math display">\[\begin{equation}
+m \frac{d^2}{d t^2} \mathbf{r}_i=\sum_j 24 \epsilon_0\left(\left(\sigma
+/ r_{i j}\right)^6-2\left(\sigma / r_{i
+j}\right)^{12}\right)\left(\mathbf{r}_{i j} / r_{i j}^2\right)
+\end{equation}\]</span></p>
+<p>变成：</p>
+<p><span class="math display">\[\begin{equation}
+\frac{d^2}{d\left(t^{\prime}\right)^2} \mathbf{r}_i^{\prime}=\sum_j
+24\left(r_{i j}^{-6}-2 r_{i j}^{-12}\right)\left(\mathbf{r}_{i
+j}^{\prime} / r_{i j}^{\prime 2}\right)
+\end{equation}\]</span></p>
+<p>对于氩气，<span class="math inline">\(\sigma\)</span> $ = 0.3405$
+<span class="math inline">\(\mu\)</span> m，以及 <span
+class="math inline">\(\epsilon\)</span> $= 1.0318^{-2} $ eV。
+对于其它原子，你需要找到相应的参数值。</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>量</th>
+<th>方程</th>
+<th>转换系数</th>
+<th>氩的值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>长度</td>
+<td><span class="math inline">\(x&#39;=x/L_0\)</span></td>
+<td><span class="math inline">\(L_0=\sigma\)</span></td>
+<td>0.3405 <span class="math inline">\(\mu m\)</span></td>
+</tr>
+<tr>
+<td>时间</td>
+<td><span class="math inline">\(t&#39;=t/\tau\)</span></td>
+<td><span class="math inline">\(\tau=\sigma
+\sqrt{m/\epsilon}\)</span></td>
+<td><span class="math inline">\(2.1569\times 10^3\)</span> fs</td>
+</tr>
+<tr>
+<td>力</td>
+<td><span class="math inline">\(F&#39;=F/F_0\)</span></td>
+<td><span class="math inline">\(F_0=m \sigma / \tau^2=\epsilon /
+\sigma\)</span></td>
+<td><span class="math inline">\(3.0303 \times 10^{-1}\)</span></td>
+</tr>
+<tr>
+<td>能量</td>
+<td><span class="math inline">\(E&#39;=E/E_0\)</span></td>
+<td>$E_0= $</td>
+<td>$ 1.0318 ^{-2} $ eV</td>
+</tr>
+<tr>
+<td>温度</td>
+<td><span class="math inline">\(T&#39;=T/T_0\)</span></td>
+<td>$T_0 = / k_B $</td>
+<td>119.74 K</td>
+</tr>
+</tbody>
+</table>
+<h3 id="系统初始化">系统初始化</h3>
+<p>初始化系统：生成一组具有随机速度的原子晶格。该晶格由尺寸为<span
+class="math inline">\(b\)</span> (单位为<span
+class="math inline">\(\sigma\)</span>)的单胞组成。 若单胞的起始为<span
+class="math inline">\(r_0\)</span>，则单胞中的四个原子的坐标为<span
+class="math inline">\(r_0\)</span>、 <span class="math inline">\(r_0 +
+(b/2, b/2, 0)\)</span>、<span class="math inline">\(r_0 + (b/2, 0,
+b/2)\)</span>、 以及 <span class="math inline">\(r_0 + (0, b/2,
+b/2)\)</span>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">L = <span class="number">5</span>  <span class="comment"># 晶格尺寸</span></span><br><span class="line">b = <span class="number">2.0</span>  <span class="comment"># 晶胞尺寸 (units of sigma)</span></span><br><span class="line">v0 = <span class="number">1.0</span>  <span class="comment"># 初始化动能尺度</span></span><br><span class="line">N = <span class="number">4</span> * L**<span class="number">3</span>  <span class="comment"># Nr of atoms</span></span><br><span class="line"></span><br><span class="line">r = np.zeros((N, <span class="number">3</span>))</span><br><span class="line">v = np.zeros((N, <span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">bvec = np.array([[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [b/<span class="number">2</span>, b/<span class="number">2</span>, <span class="number">0</span>], [b/<span class="number">2</span>, <span class="number">0</span>, b/<span class="number">2</span>], [<span class="number">0</span>, b/<span class="number">2</span>, b/<span class="number">2</span>]])</span><br><span class="line">ip = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate positions</span></span><br><span class="line"><span class="keyword">for</span> ix <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, L):</span><br><span class="line">    <span class="keyword">for</span> iy <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, L):</span><br><span class="line">        <span class="keyword">for</span> iz <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, L):</span><br><span class="line">            r0 = b * np.array([ix, iy, iz])  <span class="comment"># Unit cell base position</span></span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">4</span>):</span><br><span class="line">                r[ip, :] = r0 + bvec[k, :]</span><br><span class="line">                ip += <span class="number">1</span>  <span class="comment"># Add particle</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate velocities</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, ip):</span><br><span class="line">    v[i, :] = v0 * np.random.randn(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">writelammps(<span class="string">&#x27;mymdinit.lammpstrj&#x27;</span>, L*b, L*b, L*b, r, v)</span><br></pre></td></tr></table></figure>
+<p>将数据写入文件的函数定义如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">writelammps</span>(<span class="params">filename, Lx, Ly, Lz, r, v</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">        ip = r.shape[<span class="number">0</span>]</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: TIMESTEP\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">&#x27;0\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: NUMBER OF ATOMS\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;<span class="subst">&#123;ip&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: BOX BOUNDS pp pp pp\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;0.0 <span class="subst">&#123;Lx&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;0.0 <span class="subst">&#123;Ly&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;0.0 <span class="subst">&#123;Lz&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: ATOMS id type x y z vx vy vz\n&#x27;</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(ip):</span><br><span class="line">            fp.write(<span class="string">f&#x27;<span class="subst">&#123;i+<span class="number">1</span>&#125;</span> 1 <span class="subst">&#123;r[i, <span class="number">0</span>]&#125;</span> <span class="subst">&#123;r[i, <span class="number">1</span>]&#125;</span> <span class="subst">&#123;r[i, <span class="number">2</span>]&#125;</span> <span class="subst">&#123;v[i, <span class="number">0</span>]&#125;</span> <span class="subst">&#123;v[i, <span class="number">1</span>]&#125;</span> <span class="subst">&#123;v[i, <span class="number">2</span>]&#125;</span>\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>从而可以得到： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ITEM: TIMESTEP</span><br><span class="line"><span class="number">0</span></span><br><span class="line">ITEM: NUMBER OF ATOMS</span><br><span class="line"><span class="number">500</span></span><br><span class="line">ITEM: BOX BOUNDS pp pp pp</span><br><span class="line"><span class="number">0.0</span> <span class="number">10.0</span></span><br><span class="line"><span class="number">0.0</span> <span class="number">10.0</span></span><br><span class="line"><span class="number">0.0</span> <span class="number">10.0</span></span><br><span class="line">ITEM: ATOMS <span class="built_in">id</span> <span class="built_in">type</span> x y z vx vy vz</span><br><span class="line"><span class="number">1</span> <span class="number">1</span> <span class="number">0.0</span> <span class="number">0.0</span> <span class="number">0.0</span> -<span class="number">0.37806747920980305</span> <span class="number">0.6198930431434015</span> -<span class="number">0.37486891843336545</span></span><br><span class="line"><span class="number">2</span> <span class="number">1</span> <span class="number">1.0</span> <span class="number">1.0</span> <span class="number">0.0</span> -<span class="number">0.9735100703336169</span> <span class="number">0.11617643190081425</span> -<span class="number">1.7552597516341568</span></span><br><span class="line"><span class="number">3</span> <span class="number">1</span> <span class="number">1.0</span> <span class="number">0.0</span> <span class="number">1.0</span> <span class="number">0.27186380165078294</span> -<span class="number">0.2889571390770045</span> <span class="number">0.7686946959643555</span></span><br><span class="line"><span class="number">4</span> <span class="number">1</span> <span class="number">0.0</span> <span class="number">1.0</span> <span class="number">1.0</span> -<span class="number">0.8620072632510575</span> <span class="number">0.18294851178046748</span> -<span class="number">0.21705159596758267</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<h3 id="运动方程的积分">运动方程的积分</h3>
+<p>为了获取初始状态，需要对运动方程进行积分。 首先是读取lammps文件，
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> lammpResultsRead <span class="keyword">import</span> getSimulationSet <span class="comment"># 自定义函数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取模拟尺寸</span></span><br><span class="line"></span><br><span class="line">_, bounds_list = getSimulationSet(<span class="string">&#x27;mymdinit.lammpstrj&#x27;</span>)</span><br><span class="line"></span><br><span class="line">[Lx,Ly,Lz] = bounds_list[:, <span class="number">1</span>] - bounds_list[:, <span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">t = <span class="number">3.0</span>; dt = <span class="number">0.001</span>; n = math.ceil(t/dt);</span><br><span class="line"></span><br><span class="line">a = np.zeros((N, <span class="number">3</span>)) <span class="comment"># 存储计算出的加速度</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="meta">@njit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cal</span>(<span class="params">a,N,r,L,v,dt</span>):</span><br><span class="line">    a = np.zeros_like(a)</span><br><span class="line">    <span class="keyword">for</span> i1 <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        <span class="keyword">for</span> i2 <span class="keyword">in</span> <span class="built_in">range</span>(i1+<span class="number">1</span>, N):</span><br><span class="line">            dr = r[i1,:] - r[i2,:]</span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):     <span class="comment"># 周期性边界条件</span></span><br><span class="line">                <span class="keyword">while</span> dr[k] &gt; L[k] / <span class="number">2</span>:</span><br><span class="line">                    dr[k] = dr[k] - L[k]</span><br><span class="line">                    </span><br><span class="line">                <span class="keyword">while</span> dr[k] &lt; -L[k] / <span class="number">2</span>:</span><br><span class="line">                    dr[k] = dr[k] + L[k]</span><br><span class="line">            rr = np.dot(dr, dr)</span><br><span class="line">            <span class="comment">#print(rr)</span></span><br><span class="line">            aa = -<span class="number">24</span> * (<span class="number">2</span> * (<span class="number">1</span>/rr)**<span class="number">6</span> - (<span class="number">1</span>/rr)**<span class="number">3</span>) * dr / rr</span><br><span class="line">            a[i1, :] = a[i1, :] + aa[<span class="number">0</span>]  <span class="comment"># from i2 on i1</span></span><br><span class="line">            a[i2, :] = a[i2, :] - aa[<span class="number">1</span>]  <span class="comment"># from i1 on i2</span></span><br><span class="line">    </span><br><span class="line">    v = v + a * dt</span><br><span class="line">    r = r + v * dt</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 周期性边界条件</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i1 <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">            <span class="keyword">while</span> r[i1, k] &gt; L[k]:</span><br><span class="line">                r[i1, k] = r[i1, k] - L[k]</span><br><span class="line">            <span class="keyword">while</span> r[i1, k] &lt; <span class="number">0</span>:</span><br><span class="line">                r[i1, k] = r[i1, k] + L[k]</span><br><span class="line">    <span class="keyword">return</span> r, v</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n-<span class="number">1</span>): </span><br><span class="line">    </span><br><span class="line">    r,v = cal(a,N,r,L,v,dt)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> i%<span class="number">10</span>==<span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">    writelammps(<span class="string">&#x27;mymdinit.lammpstrj&#x27;</span>,i, L[<span class="number">0</span>], L[<span class="number">1</span>], L[<span class="number">2</span>], r, v)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>在上述代码中，我们重新定义了<code>writelammps</code>函数为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">writelammps</span>(<span class="params">filename,timestep, Lx, Ly, Lz, r, v</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">        ip = r.shape[<span class="number">0</span>]</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: TIMESTEP\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;<span class="subst">&#123;timestep&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: NUMBER OF ATOMS\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;<span class="subst">&#123;ip&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: BOX BOUNDS pp pp pp\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;0.0 <span class="subst">&#123;Lx&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;0.0 <span class="subst">&#123;Ly&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">f&#x27;0.0 <span class="subst">&#123;Lz&#125;</span>\n&#x27;</span>)</span><br><span class="line">        fp.write(<span class="string">&#x27;ITEM: ATOMS id type x y z vx vy vz\n&#x27;</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(ip):</span><br><span class="line">            fp.write(<span class="string">f&#x27;<span class="subst">&#123;i+<span class="number">1</span>&#125;</span> 1 <span class="subst">&#123;r[i, <span class="number">0</span>]&#125;</span> <span class="subst">&#123;r[i, <span class="number">1</span>]&#125;</span> <span class="subst">&#123;r[i, <span class="number">2</span>]&#125;</span> <span class="subst">&#123;v[i, <span class="number">0</span>]&#125;</span> <span class="subst">&#123;v[i, <span class="number">1</span>]&#125;</span> <span class="subst">&#123;v[i, <span class="number">2</span>]&#125;</span>\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>需要注意的是上述代码速度在140步以后会发散，原作者写的matlab代码只是为了展示分子动力学程序的结构和原理，以及如何处理数据和将数据存储在文件中。如果没有加速，源代码是异常慢的。因此是没有必要完全运行该代码的。</p>
+<h2 id="进行了分子动力学模拟">进行了分子动力学模拟</h2>
+<h3 id="安装lammps">安装Lammps</h3>
+<p>由于学习的时候，我的电脑本身就安装了Lammps，因此该部分略去。</p>
+<h3 id="在lammps中进行仿真">在LAMMPS中进行仿真</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 2d L-J gas</span></span><br><span class="line">units lj <span class="comment"># 该命令选择L-J 单位，长度单位为\sigma，能量单位为\epsilon_0，</span></span><br><span class="line"><span class="comment"># 时间单位为\tao = \sigma \sqrt(m/\epsilon)，温度项T_0 = \epsilon / k_B</span></span><br><span class="line"><span class="comment"># 对于氩气 \sigma = 0.3405 \mu m，\epsilon = 1.0318 \cdot 10^&#123;-2&#125; eV</span></span><br><span class="line">dimension <span class="number">2</span> <span class="comment"># 指定维度，此处是2维模拟</span></span><br><span class="line">boundary p p p <span class="comment"># 指定边界条件，此处为周期性边界条件</span></span><br><span class="line">atom_style atomic <span class="comment"># 该命令描述了每个原子/粒子的复杂性，此处我们使用了最简单的描述，atomic，用于惰性气体和粗粒度模拟。</span></span><br><span class="line"></span><br><span class="line">lattice <span class="built_in">hex</span> <span class="number">0.75</span> <span class="comment"># 该命令生成晶格原子的坐标，并不生成原子，仅当我们生成原子的时候才有原子。</span></span><br><span class="line"><span class="comment"># hex 二维六方晶格，因此每个原子有六个最近邻原子。</span></span><br><span class="line"><span class="comment"># 当我们选择LJ单元进行模拟时，0.75被称为尺度，是约化密度\rho&#x27;。</span></span><br><span class="line"><span class="comment"># (注意到如果我们不使用LJ单位,量表的解释是不同的,参见LAMMPS文档以获得更多的信息)。</span></span><br><span class="line">region simbox block <span class="number">0</span> <span class="number">20</span> <span class="number">0</span> <span class="number">10</span> -<span class="number">0.1</span> <span class="number">0.1</span> <span class="comment"># 该命令定义了范围，0 &lt; x &lt; 20, 0 &lt; y &lt; 10, -0.1 &lt; z &lt; 0.1； 并将该区域命名为simbox。</span></span><br><span class="line">create_box <span class="number">1</span> simbox <span class="comment"># 创建区域，模拟盒子只包含1 ( 1 )种原子，因此数量为1。</span></span><br><span class="line">create_atoms <span class="number">1</span> box  <span class="comment"># 向模拟box中填充我们定义的类型为1的原子。</span></span><br><span class="line"></span><br><span class="line">mass <span class="number">1</span> <span class="number">1.0</span> <span class="comment"># 该命令定义类型1的原子相对于L-J模型的质量为1。这意味着所有原子的质量都与L-J模型无量纲化时使用的质量m相同。</span></span><br><span class="line">velocity <span class="built_in">all</span> create <span class="number">2.5</span> <span class="number">87287</span> <span class="comment"># 该命令产生随机速度(高斯分布)，使系统中所有原子类型的初始温度为2.5 (L-J无量纲单位)。</span></span><br><span class="line"><span class="comment"># 87287 是随机数生成器的seed，只要不改变seed值，就会产生与本次模拟相同的初始速度分布。</span></span><br><span class="line">pair_style lj/cut <span class="number">2.5</span> <span class="comment"># 该命令制定了我们想要使用的长度为2.5的L-J势，也就是说当距离大于2.5时，相互作用近似为0。</span></span><br><span class="line">pair_coeff <span class="number">1</span> <span class="number">1</span> <span class="number">1.0</span> <span class="number">1.0</span> <span class="number">2.5</span> <span class="comment"># 指定L-J参数，前两个数字表示我们使用的是第1类原子和第1类原子之间的相互作用。</span></span><br><span class="line"><span class="comment"># L-J参数为1.0、1.0以及2.5。这意味着两原子之间的相互作用具有的\sigma值对应于1.0乘以一般的\sigma值；</span></span><br><span class="line"><span class="comment"># \epsilon_0的值对应于1.0乘以总体的\epsilon的值；最后的2.5是cut-off，与上面的2.5一样。</span></span><br><span class="line"></span><br><span class="line">neighbor <span class="number">0.3</span> <span class="built_in">bin</span>  </span><br><span class="line">neigh_modify every <span class="number">20</span> delay <span class="number">0</span> check no</span><br><span class="line"><span class="comment"># 这个模块包含了仿真器是如何使用定期更新的邻居列表来计算原子之间的相互作用的信息。</span></span><br><span class="line"><span class="comment"># 不需要改变这些参数，但改变它们通常不会对模拟结果产生任何影响，只会对模拟的效率产生影响。</span></span><br><span class="line"></span><br><span class="line">fix <span class="number">1</span> <span class="built_in">all</span> nve <span class="comment"># 指定在原子上进行何种模拟，这可以通过一个或多个可以应用于原子区域的fix命令来完成。</span></span><br><span class="line"><span class="comment"># 此处，我们称fix为1，被应用于所有粒子(all)。指定模拟在常数nve下运行，固定数量的粒子(n)，定容体积(v，表示模拟box不在过程中发生变化)，以及固定的能量(e)。</span></span><br><span class="line"><span class="comment"># 你可能会惊讶于能量不变的部分。积分算法是否保证能量恒定？是的。</span></span><br><span class="line"><span class="comment"># 然而，也可能存在我们想要给系统的某一部分添加能量的情况，在这种情况下，基本的迭代算法仍然保持能量，但是我们添加了可能改变系统总能量的额外项。</span></span><br><span class="line"></span><br><span class="line">dump <span class="number">1</span> <span class="built_in">all</span> custom <span class="number">10</span> dump.lammpstrj <span class="built_in">id</span> <span class="built_in">type</span> x y z vx vy vz</span><br><span class="line"><span class="comment"># 该命令告诉模拟器输出状态。1是我们给该转存(dump)的名字；</span></span><br><span class="line"><span class="comment"># 输出all原子使用custom输出形式，且每10个时间步输出到文件dump.lammpstrj文件中，后面规定了每个原子输出的是什么。</span></span><br><span class="line">thermo <span class="number">100</span> <span class="comment"># 该命令规定了每100个时间步向log.lammps日志文件和终端输出日志。</span></span><br><span class="line">run <span class="number">5000</span> <span class="comment"># 该命令开始模拟，并指定它将运行5000个时间步。</span></span><br></pre></td></tr></table></figure>
+<h2 id="advanced-models">Advanced models</h2>
+<h3 id="coarsening">Coarsening</h3>
+<p>对于上述的模型，如果仍以原子均匀分布的状态启动系统个，但初始能量较低，会发生什么呢？
+此外，我们保持系统的平均动能大致恒定(这意味着我们大约保持系统内温度恒定)。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">units lj</span><br><span class="line">dimension <span class="number">2</span></span><br><span class="line">boundary p p p</span><br><span class="line">atom_style atomic</span><br><span class="line"></span><br><span class="line">lattice <span class="built_in">hex</span> <span class="number">0.5</span></span><br><span class="line">region simbox block <span class="number">0</span> <span class="number">80</span> <span class="number">0</span> <span class="number">40</span> -<span class="number">0.1</span> <span class="number">0.1</span></span><br><span class="line">create_box <span class="number">1</span> simbox</span><br><span class="line">create_atoms <span class="number">1</span> box</span><br><span class="line"> </span><br><span class="line">mass <span class="number">1</span> <span class="number">1.0</span></span><br><span class="line">veloctity <span class="built_in">all</span> create <span class="number">0.05</span> <span class="number">87287</span>  <span class="comment"># 此处</span></span><br><span class="line"></span><br><span class="line">pair_style lj/cut <span class="number">2.5</span></span><br><span class="line">pair_coeff <span class="number">1</span> <span class="number">1</span> <span class="number">1.0</span> <span class="number">1.0</span> <span class="number">2.5</span></span><br><span class="line"></span><br><span class="line">neighbor <span class="number">0.3</span> <span class="built_in">bin</span></span><br><span class="line">neigh_modifty every <span class="number">20</span> delay <span class="number">0</span> check no</span><br><span class="line"></span><br><span class="line">fix <span class="number">1</span> <span class="built_in">all</span> nvt temp <span class="number">0.25</span> <span class="number">0.25</span> <span class="number">1.0</span> <span class="comment"># 此处</span></span><br><span class="line">dump <span class="number">1</span> <span class="built_in">all</span> atom <span class="number">1000</span> dump.lammpstrj</span><br><span class="line">thermo <span class="number">100</span></span><br><span class="line">run <span class="number">50000</span></span><br></pre></td></tr></table></figure>
+<p>这会导致相分离：体系分离成了液体和气体相，展示一种名为“准晶分解”的现象。
+该现象后续会讨论。</p>
+<h3 id="硅晶体的断裂">硅晶体的断裂</h3>
+<p>原书待续</p>
+<h2 id="练习">练习</h2>
+<p>暂时不看</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Statistical-and-Thermal-Physics-Using-Python/" rel="tag"># Statistical and Thermal Physics Using Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/year/09/15/CyberGear/" rel="prev" title="微电机、红外高温计、真空计、流量计、分子泵">
+                  <i class="fa fa-chevron-left"></i> 微电机、红外高温计、真空计、流量计、分子泵
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/year/09/19/plasmaSolver/" rel="next" title="用于脉冲激光沉积的等离子体求解器">
+                  用于脉冲激光沉积的等离子体求解器 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Dr. Zhou</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+<!-- <br /> -->
+<!-- Dr. Zhou从事科研工作的时间 -->
+<span id="timeDate">载入天数...</span>
+<!-- <span id="times">载入时分秒...</span> -->
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("08/02/2016 8:00:00");//此处修改你的建站时间或者网站上线时间
+        now.setTime(now.getTime()+250);
+	years = (now - grt ) / 1000 / 60 / 60 / 24 / 365; ynum = Math.floor(years);
+        days = (now - grt ) / 1000 / 60 / 60 / 24 - (365*ynum) ; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum)- (365*24*ynum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum)- (60*365*24*ynum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000- (60*60*365*24*ynum) - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); 
+        if(String(snum).length ==1 ){snum = "0" + snum;}
+        // var times = document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+        document.getElementById("timeDate").innerHTML = "Dr. Zhou 正式从事科研工作： "+ynum+" 年 " +dnum+" 天 "+hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/G-D-Zhou" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
